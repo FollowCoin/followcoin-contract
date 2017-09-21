@@ -2,23 +2,29 @@ pragma solidity ^0.4.15;
 
 import 'zeppelin-solidity/contracts/token/ERC20Basic.sol';
 import 'zeppelin-solidity/contracts/token/StandardToken.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
+import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
 
-
-contract FollowcoinTokenIco is StandardToken {
+contract FollowCoin is StandardToken, Destructible, Pausable {
     using SafeMath for uint256;
 
-    string public name = "Follow Token";
-    string public symbol = "FLT";
-    uint256 public decimals = 8;
+    string public name = "Follow Coin";
+    string public symbol = "FLLW";
+    uint256 public decimals = 18;
 
-    uint256 public totalSupply = 1000000 * (uint256(10) ** decimals);
+    uint256 public totalSupply = 5000 * (uint256(10) ** decimals); // 330000000
     uint256 public totalRaised; // total ether raised (in wei)
 
-    uint256 public startTimestamp; // timestamp after which ICO will start
+    uint256 public startTimestamp = 1505938185; //27.10.2017 - 1509105600 // timestamp after which ICO will start
     uint256 public durationSeconds = 4 * 7 * 24 * 60 * 60; // 4 weeks
 
-    uint256 public minCap; // the ICO ether goal (in wei)
-    uint256 public maxCap; // the ICO ether max cap (in wei)
+    uint256 public minCap = 0; // the ICO ether goal (in wei)
+    uint256 public maxCap = 10000 ether; // the ICO ether max cap (in wei)
+
+    uint256 public maxCapPerWallet = 3 ether;
+
+    //ETH ammount for account in wei
+    mapping (address => uint256) ethbalances;
 
     /**
      * Address which will receive raised funds 
@@ -26,15 +32,8 @@ contract FollowcoinTokenIco is StandardToken {
      */
     address public fundsWallet;
 
-    function FollowcoinTokenIco(
-        address _fundsWallet,
-        uint256 _startTimestamp,
-        uint256 _minCap,
-        uint256 _maxCap) {
-        fundsWallet = _fundsWallet;
-        startTimestamp = _startTimestamp;
-        minCap = _minCap;
-        maxCap = _maxCap;
+    function FollowCoin() {
+        fundsWallet = 0x585BCC9308646923737611E9e1588cDCF9020Dd0;
 
         // initially assign all tokens to the fundsWallet
         balances[fundsWallet] = totalSupply;
@@ -45,22 +44,39 @@ contract FollowcoinTokenIco is StandardToken {
         totalRaised = totalRaised.add(msg.value);
 
         uint256 tokenAmount = calculateTokenAmount(msg.value);
+
+        //require(tokenAmount <= balances[fundsWallet]);
+        //require(ethbalances[msg.sender] + msg.value <= maxCapPerWallet);
+
         balances[fundsWallet] = balances[fundsWallet].sub(tokenAmount);
         balances[msg.sender] = balances[msg.sender].add(tokenAmount);
         Transfer(fundsWallet, msg.sender, tokenAmount);
 
         // immediately transfer ether to fundsWallet
         fundsWallet.transfer(msg.value);
+        //ethbalances[msg.sender].add(msg.value);
     }
 
     function calculateTokenAmount(uint256 weiAmount) constant returns(uint256) {
-        // standard rate: 1 ETH : 50 FLLW
-        uint256 tokenAmount = weiAmount.mul(50);
-        if (now <= startTimestamp + 2 days) {
-            // +20% bonus during first week
-            return tokenAmount.mul(120).div(100);
-        } else {
-            return tokenAmount;
+        // standard rate: 0,00012 ETH : 1 FLLW  = 1/0,00012 ~ 8333
+        uint256 tokenAmount = weiAmount.mul(8333);
+        uint256 soldTokens = totalRaised.div(balances[fundsWallet]).mul(100);
+        
+        if(soldTokens <= 10) {
+          // + 30%
+          return tokenAmount.mul(130).div(100);
+        }
+        else if(soldTokens <= 20) {
+           // + 20%
+           return tokenAmount.mul(120).div(100);
+        }
+        else if(soldTokens <= 70) {
+           // + 10%
+           return tokenAmount.mul(110).div(100);
+        }
+        else
+        {
+          return tokenAmount;
         }
     }
 
