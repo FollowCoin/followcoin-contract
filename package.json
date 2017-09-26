@@ -1,12 +1,6 @@
 {
-  "name": "followcoin",
-  "version": "1.0.0",
-  "description": "Follow Coin ICO",
-  "main": "index.js",
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "web3": "^1.0.0-beta.15",
+    "webstorm-disable-index": "1",
     "zeppelin-solidity": "^1.2.0"
   }
 }

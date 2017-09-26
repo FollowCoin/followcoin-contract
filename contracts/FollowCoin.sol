@@ -1,103 +1,160 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.13;
 
-import 'zeppelin-solidity/contracts/token/ERC20Basic.sol';
-import 'zeppelin-solidity/contracts/token/StandardToken.sol';
-import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
-import 'zeppelin-solidity/contracts/lifecycle/Pausable.sol';
+contract Owned {
+    address public owner;
 
-contract FollowCoin is StandardToken, Destructible, Pausable {
-    using SafeMath for uint256;
+    function Owned() {
+        owner = msg.sender;
+    }
 
-    string public name = "Follow Coin";
-    string public symbol = "FLLW";
-    uint256 public decimals = 18;
+    modifier onlyOwner {
+        require(msg.sender == owner);
+        _;
+    }
 
-    uint256 public totalSupply = 5000 * (uint256(10) ** decimals); // 330000000
-    uint256 public totalRaised; // total ether raised (in wei)
+    function transferOwnership(address newOwner) onlyOwner {
+        owner = newOwner;
+    }
+}
 
-    uint256 public startTimestamp = 1505938185; //27.10.2017 - 1509105600 // timestamp after which ICO will start
-    uint256 public durationSeconds = 4 * 7 * 24 * 60 * 60; // 4 weeks
+contract FollowCoin is Owned {
+    // Public variables of the token
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
 
-    uint256 public minCap = 0; // the ICO ether goal (in wei)
-    uint256 public maxCap = 10000 ether; // the ICO ether max cap (in wei)
+    // This creates an array with all balances
+    mapping (address => uint256) public balanceOf;
+    mapping (address => bool) public frozenAccount;
+    event FrozenFunds(address target, bool frozen);
 
-    uint256 public maxCapPerWallet = 3 ether;
 
-    //ETH ammount for account in wei
-    mapping (address => uint256) ethbalances;
+    // This generates a public event on the blockchain that will notify clients
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    // This notifies clients about the amount burnt
+    event Burn(address indexed from, uint256 value);
+
+    bool public contributorsLockdown = true;
+
+    function setLockDown(bool lock) onlyOwner {
+        contributorsLockdown = lock;
+    }
+
+    modifier coinsLocked() {
+      require(!contributorsLockdown || msg.sender == owner);
+      _;
+    }
 
     /**
-     * Address which will receive raised funds 
-     * and owns the total supply of tokens
+     * Constructor function
+     *
+     * Initializes contract with initial supply tokens to the creator of the contract
      */
-    address public fundsWallet;
+    function FollowCoin(
+        uint256 initialSupply,
+        string tokenName,
+        uint8 decimalUnits,
+        string tokenSymbol
+    ) {
+        owner = msg.sender;
+        balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
+        totalSupply = initialSupply;                        // Update total supply
+        name = tokenName;                                   // Set the name for display purposes
+        symbol = tokenSymbol;                               // Set the symbol for display purposes
+        decimals = decimalUnits;                            // Amount of decimals for display purposes
 
-    function FollowCoin() {
-        fundsWallet = 0x585BCC9308646923737611E9e1588cDCF9020Dd0;
-
-        // initially assign all tokens to the fundsWallet
-        balances[fundsWallet] = totalSupply;
-        Transfer(0x0, fundsWallet, totalSupply);
+        /*
+        owner = msg.sender;
+        balanceOf[owner] = 1000000000 * 1 ether;
+        totalSupply = 1000000000 * 1 ether;
+        name = 'Follow Coin #2';
+        symbol = 'FLLW';
+        decimals = 18;
+        */
     }
 
-    function() isIcoOpen payable {
-        totalRaised = totalRaised.add(msg.value);
-
-        uint256 tokenAmount = calculateTokenAmount(msg.value);
-
-        //require(tokenAmount <= balances[fundsWallet]);
-        //require(ethbalances[msg.sender] + msg.value <= maxCapPerWallet);
-
-        balances[fundsWallet] = balances[fundsWallet].sub(tokenAmount);
-        balances[msg.sender] = balances[msg.sender].add(tokenAmount);
-        Transfer(fundsWallet, msg.sender, tokenAmount);
-
-        // immediately transfer ether to fundsWallet
-        fundsWallet.transfer(msg.value);
-        //ethbalances[msg.sender].add(msg.value);
+    /**
+     * Internal transfer, only can be called by this contract
+     */
+    function _transfer(address _from, address _to, uint _value) coinsLocked internal {
+        require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
+        require(balanceOf[_from] >= _value);                // Check if the sender has enough
+        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
+        require(!frozenAccount[msg.sender]); //Check if not frozen
+        balanceOf[_from] -= _value;                         // Subtract from the sender
+        balanceOf[_to] += _value;                           // Add the same to the recipient
+        Transfer(_from, _to, _value);
+    }
+    
+    /**
+     * Transfer tokens
+     *
+     * Send `_value` tokens to `_to` from your account
+     *
+     * @param _to The address of the recipient
+     * @param _value the amount to send
+     */
+    function transfer(address _to, uint256 _value)  {
+        _transfer(msg.sender, _to, _value);
     }
 
-    function calculateTokenAmount(uint256 weiAmount) constant returns(uint256) {
-        // standard rate: 0,00012 ETH : 1 FLLW  = 1/0,00012 ~ 8333
-        uint256 tokenAmount = weiAmount.mul(8333);
-        uint256 soldTokens = totalRaised.div(balances[fundsWallet]).mul(100);
-        
-        if(soldTokens <= 10) {
-          // + 30%
-          return tokenAmount.mul(130).div(100);
-        }
-        else if(soldTokens <= 20) {
-           // + 20%
-           return tokenAmount.mul(120).div(100);
-        }
-        else if(soldTokens <= 70) {
-           // + 10%
-           return tokenAmount.mul(110).div(100);
-        }
-        else
-        {
-          return tokenAmount;
-        }
+    /**
+     * Transfer tokens from other address
+     *
+     * Send `_value` tokens to `_to` in behalf of `_from`
+     *
+     * @param _from The address of the sender
+     * @param _to The address of the recipient
+     * @param _value the amount to send
+     */
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        _transfer(_from, _to, _value);
+        return true;
     }
 
-    function transfer(address _to, uint _value) isIcoFinished returns (bool) {
-        return super.transfer(_to, _value);
+    function freezeAccount(address target, bool freeze) onlyOwner {
+        frozenAccount[target] = freeze;
+        FrozenFunds(target, freeze);
     }
 
-    function transferFrom(address _from, address _to, uint _value) isIcoFinished returns (bool) {
-        return super.transferFrom(_from, _to, _value);
+
+    function mintToken(address target, uint256 mintedAmount) onlyOwner {
+        balanceOf[target] += mintedAmount;
+        totalSupply += mintedAmount;
+        Transfer(0, owner, mintedAmount);
+        Transfer(owner, target, mintedAmount);
     }
 
-    modifier isIcoOpen() {
-        require(now >= startTimestamp);
-        require(now <= (startTimestamp + durationSeconds) || totalRaised < minCap);
-        require(totalRaised <= maxCap);
-        _;
+    /**
+     * Destroy tokens
+     *
+     * Remove `_value` tokens from the system irreversibly
+     *
+     * @param _value the amount of money to burn
+     */
+    function burn(uint256 _value) onlyOwner returns (bool success) {
+        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
+        balanceOf[msg.sender] -= _value;            // Subtract from the sender
+        totalSupply -= _value;                      // Updates totalSupply
+        Burn(msg.sender, _value);
+        return true;
     }
 
-    modifier isIcoFinished() {
-        require(now >= startTimestamp);
-        require(totalRaised >= maxCap || (now >= (startTimestamp + durationSeconds) && totalRaised >= minCap));
-        _;
+    /**
+     * Destroy tokens from other ccount
+     *
+     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
+     *
+     * @param _from the address of the sender
+     * @param _value the amount of money to burn
+     */
+    function burnFrom(address _from, uint256 _value) onlyOwner returns (bool success) {
+        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
+        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
+        totalSupply -= _value;                              // Update totalSupply
+        Burn(_from, _value);
+        return true;
     }
 }
