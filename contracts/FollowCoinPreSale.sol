@@ -64,15 +64,6 @@ contract FollowCoin is Owned {
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits;                            // Amount of decimals for display purposes
-
-        /*
-        owner = msg.sender;
-        balanceOf[owner] = 1000000000 * 1 ether;
-        totalSupply = 1000000000 * 1 ether;
-        name = 'Follow Coin #2';
-        symbol = 'FLLW';
-        decimals = 18;
-        */
     }
 
     /**
@@ -260,7 +251,7 @@ contract FollowCoinPreSale is Haltable {
      * Setup the owner
      */
     function FollowCoinPreSale(
-        /*address ifSuccessfulSendTo,
+        address ifSuccessfulSendTo,
         uint icoTokensLimitPerWallet,
         uint icoHardCap,
         uint icoSoftCap,
@@ -268,11 +259,11 @@ contract FollowCoinPreSale is Haltable {
         uint durationInDays,
         uint icoTotalTokens,
         uint icoTokensPerEther,
-        address addressOfTokenUsedAsReward*/
+        address addressOfTokenUsedAsReward
     ) {
 
-        /*beneficiary = ifSuccessfulSendTo;
-        softCap = icoSoftCap;
+        beneficiary = ifSuccessfulSendTo;
+        softCap = icoSoftCap; 
         hardCap = icoHardCap;
         deadline = icoStartTimestamp + durationInDays * 1 days;
         startTimestamp = icoStartTimestamp;
@@ -280,19 +271,6 @@ contract FollowCoinPreSale is Haltable {
         tokenLimitPerWallet = icoTokensLimitPerWallet;
         tokensPerEther = icoTokensPerEther;
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
-*/
-
-        
-        beneficiary = 0x7cB57544A7617e7bc02fbc4F0EDF7B3bb71B69Ac;
-        softCap = 0;
-        hardCap = 330000000 * 1 ether;
-        startTimestamp = 1506435417;
-        deadline = startTimestamp + 28 days;
-        totalTokens = 330000000 * 1 ether;
-        tokenLimitPerWallet = 1000 * 1 ether;
-        tokensPerEther = 7777;
-        tokenReward = FollowCoin(0xbE1AeB8c2757463955c08Ad0B6f0C4E0E94B6725);
-        
     }
 
     /**

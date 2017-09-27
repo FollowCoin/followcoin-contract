@@ -38,6 +38,6 @@ truffle test
 
 ### Ropsten network testing
 
-geth --fast --cache=1048 --testnet --unlock "0x585BCC9308646923737611E9e1588cDCF9020Dd0" --rpc --rpcapi "eth,net,web3" --rpccorsdomain '*' --rpcaddr localhost --rpcport 8545
+geth --fast --cache=1048 --testnet --unlock "[your_ropsten_address]" --rpc --rpcapi "eth,net,web3" --rpccorsdomain '*' --rpcaddr localhost --rpcport 8545
 
 truffle deploy --network ropsten

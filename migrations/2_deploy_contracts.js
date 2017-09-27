@@ -1,11 +1,7 @@
-//var SafeMath = artifacts.require('./SafeMath.sol');
 var FollowCoin = artifacts.require("./FollowCoin.sol");
 var FollowCoinPreSale = artifacts.require("./FollowCoinPreSale.sol");
 
 module.exports = function(deployer) {
-  //deployer.deploy(SafeMath);
-  //deployer.link(SafeMath, FollowCoin);
-  //deployer.link(SafeMath, FollowCoinPreSale);
   const initialSupply = web3.toWei(1000000000, "ether")
   const tokenName = 'Follow Coin';
   const decimalUnits = 18;
