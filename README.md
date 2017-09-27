@@ -14,9 +14,12 @@ Amount of tokens: 330 000 000 FLLW (33% from total 1 000 000 000 supply)
 
 Rate: 7777 FLLW per 1 ETH
 
-Presale JCR token discount: 
+Presale FLLW token discount: 
+
 30% BONUS: 0 - 10% FLLW SOLD
+
 20% BONUS: 10% - 20% FLLW SOLD
+
 10% BONUS: 20% - 70% FLLW SOLD
 
 Max. investment on pre-ICO: 1000 ETH
