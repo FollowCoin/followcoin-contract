@@ -314,7 +314,7 @@ contract FollowCoinPreSale is Haltable {
      *
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
-    function () payable preSaleActive inNormalState {
+    function () payable preSaleActive inNormalState validGasPrice {
         require(msg.value > 0);
        
         uint amount = msg.value;
@@ -334,7 +334,7 @@ contract FollowCoinPreSale is Haltable {
 
         tokenReward.transfer(msg.sender, tokens);
         multisig.transfer(amount);
-        FundTransfer(msg.sender, amount, true);
+        //FundTransfer(msg.sender, amount, true);
     }
 
 
