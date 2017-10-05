@@ -214,7 +214,7 @@ contract FollowCoin is Ownable {
 
  }
 
-contract FollowCoinPreSale is Haltable {
+contract FollowCoinTokenSale is Haltable {
     uint256 public constant MAX_GAS_PRICE = 50000000000 wei;
 
     address public beneficiary;
@@ -239,7 +239,7 @@ contract FollowCoinPreSale is Haltable {
      *
      * Setup the owner
      */
-    function FollowCoinPreSale(
+    function FollowCoinTokenSale(
         address multiSigWallet,
         uint icoTokensLimitPerWallet,
         uint icoHardCap,
