@@ -1,5 +1,5 @@
 var FollowCoin = artifacts.require("./FollowCoin.sol");
-var FollowCoinPreSale = artifacts.require("./FollowCoinTokenSale.sol");
+var FollowCoinTokenSale = artifacts.require("./FollowCoinTokenSale.sol");
 
 module.exports = function(deployer) {
   const initialSupply = web3.toWei(1000000000, "ether")

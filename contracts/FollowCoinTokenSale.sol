@@ -75,13 +75,13 @@ contract FollowCoin is Ownable {
      * Initializes contract with initial supply tokens to the creator of the contract
      */
     function FollowCoin(
-        address ownerOfContract,
+        address multiSigWallet,
         uint256 initialSupply,
         string tokenName,
         uint8 decimalUnits,
         string tokenSymbol
     ) {
-        owner = ownerOfContract;
+        owner = multiSigWallet;
         balanceOf[owner] = initialSupply;              // Give the creator all initial tokens
         totalSupply = initialSupply;                        // Update total supply
         name = tokenName;                                   // Set the name for display purposes
@@ -334,7 +334,7 @@ contract FollowCoinTokenSale is Haltable {
 
         tokenReward.transfer(msg.sender, tokens);
         multisig.transfer(amount);
-        //FundTransfer(msg.sender, amount, true);
+        FundTransfer(msg.sender, amount, true);
     }
 
 
