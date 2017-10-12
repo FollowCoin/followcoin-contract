@@ -12,7 +12,7 @@ namespace coretests
     {
         private const String _contractName = "FollowCoin";
 
-        [Fact]
+        //[Fact]
         public void Should_Be_Lockeddown()
         {
             var contract = GetContract(_contractName);
@@ -22,7 +22,7 @@ namespace coretests
             Assert.Equal(true, actual);
         }
 
-        [Fact]
+        //[Fact]
         public void Owner_Should_Be_Able_To_Unlock()
         {
             var contract = GetContract(_contractName);

@@ -19,33 +19,28 @@ namespace coretests
             DeplyContract(contractPath, _contractName, constructorParms);
         }
 
-        [Fact]
+        //[Fact]
         public void Owner_Should_Mint_Tokens()
         {
-            // var contract = GetContract(contractName);
-            // var balanceFunction = contract.GetFunction("balanceOf");
+            var contract = GetContract(contractName);
+            var balanceFunction = contract.GetFunction("balanceOf");
 
-            // var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
-            // Assert.Equal(0, balance);
+            var balance = balanceFunction.CallAsync<BigInteger>(alice).Result;
+            Assert.Equal(0, balance);
 
-            // var functionToTest = contract.GetFunction("buyTokens");
+            var functionToTest = contract.GetFunction("mintToken");
 
-            // Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
-            // BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(ethAmount, Nethereum.Util.UnitConversion.EthUnit.Ether);
-            // Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
+            Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
+            BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(0, Nethereum.Util.UnitConversion.EthUnit.Ether);
+            Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
 
-            // Object[] functionParams = new Object[0];
-            // var tx = functionToTest.SendTransactionAsync(buyer, gas, eth, functionParams).Result;
+            Object[] functionParams = new Object[2] { alice, 200 };
+            var tx = functionToTest.SendTransactionAsync(owner, gas, eth, functionParams).Result;
 
-            // Assert.NotNull(tx);
+            Assert.NotNull(tx);
 
-            // balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
-            // Assert.Equal(expected, balance);
-
-            // var totalSoldFunction = contract.GetFunction("getTotalSold");
-            // var actual = totalSoldFunction.CallAsync<BigInteger>().Result;
-
-            // Assert.Equal(expected, actual);
+            balance = balanceFunction.CallAsync<BigInteger>(alice).Result;
+            Assert.Equal(200, balance);
         }
     }
 }
