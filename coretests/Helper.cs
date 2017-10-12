@@ -20,10 +20,11 @@ namespace coretests
         public static String HALF_ETH = "50000000000000000";
         public static String TWO_ETH = "200000000000000000";
 
-        public const Int64 OCTOBER_6_2017 = 1507323600;
+        public const Int64 OCTOBER_27_2017 = 1509062400;
 
         public const String contractName = "FollowCoinPreSale";
         
+        //public String contractPath = "/home/lucascullen/GitHub/followcoin-contract/bin/src/contracts/";
         public String contractPath = "/home/lucascullen/GitHub/followcoin-contract/bin/src/contracts/";
 
         public String contractAddress = "";
