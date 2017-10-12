@@ -35,7 +35,7 @@ namespace coretests
             var tx = functionToTest.SendTransactionAsync(owner, gas, eth, new Object[1]{ amount }).Result;
             Assert.NotNull(tx);
 
-            // check token's have been burnt
+            // check tokens have been burnt
             var postBalance = GetBalance(contract, owner);
             Assert.Equal((ownersBalance - amount), postBalance);
         }
@@ -69,7 +69,7 @@ namespace coretests
             var functionToTest = contract.GetFunction("burn");            
             Assert.Throws<AggregateException>(() => functionToTest.SendTransactionAsync(nonOwner, gas, eth, new Object[1]{ amount }).Result);            
 
-            // check token's have not been burnt
+            // check tokens have not been burnt
             var postBalance = balanceFunction.CallAsync<BigInteger>(nonOwner).Result;
             Assert.Equal(balance, postBalance);
         }
@@ -90,11 +90,46 @@ namespace coretests
             var functionToTest = contract.GetFunction("burn");            
             Assert.Throws<AggregateException>(() => functionToTest.SendTransactionAsync(owner, gas, eth, new Object[1]{ ownersBalance + 1 }).Result);
 
-            // check token's have not been burnt
+            // check tokens have not been burnt
             var postBalance = GetBalance(contract, owner);
             Assert.Equal(ownersBalance, postBalance);
         }
 
+
+        [Fact]
+        public void Should_Burn_From_Tokens()
+        {
+            var user = alice;
+            var amount = 1000;
+
+            var contract = GetContract(_contractName);   
+
+            Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
+            Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(0);          
+
+            // check owner's balance has tokens to transfer to user
+            var balanceFunction = contract.GetFunction("balanceOf");
+            var ownersBalance = balanceFunction.CallAsync<BigInteger>(owner).Result;
+            Assert.True(ownersBalance > amount, String.Format("Expected {0} to be > than {1}", ownersBalance, amount));
+
+            // give user some tokens to burn
+            var transferFunction = contract.GetFunction("transfer");
+            var transferTx = transferFunction.SendTransactionAsync(owner, gas, eth, new Object[2]{ user, amount }).Result;
+            Assert.NotNull(transferTx);
+
+            // user's balance has transferred tokens?        
+            var balance = balanceFunction.CallAsync<BigInteger>(user).Result;
+            Assert.Equal(amount, balance);
+
+            // burn user's tokens
+            var functionToTest = contract.GetFunction("burnFrom");            
+            var tx = functionToTest.SendTransactionAsync(owner, gas, eth, new Object[2]{ user, amount }).Result;
+            Assert.NotNull(tx);
+
+            // check tokens have not been burnt
+            var postBalance = balanceFunction.CallAsync<BigInteger>(user).Result;
+            Assert.Equal((balance - amount), postBalance);
+        }
 
         [Theory(Skip="for now")]
         [InlineData(1000, 7777, alice)]    
