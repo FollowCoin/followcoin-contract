@@ -301,25 +301,6 @@ contract FollowCoinPreSale is Haltable {
      */
     function () payable preSaleActive inNormalState {
         buyTokens();
-        // require(msg.value > 0);
-       
-        // uint amount = msg.value;
-        // require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
-
-        // uint tokens = calculateTokenAmount(amount * tokensPerEther);
-        // require(tokensSold + tokens <= hardCap); // hardCap limit
-
-        // balanceOf[msg.sender] += amount;
-        // amountRaised += amount;
-
-        // tokensSold += tokens;
-
-        // if (tokenReward.balanceOf(msg.sender) == 0) {
-        //     investorCount++;
-        // }
-
-        // tokenReward.transferFrom(beneficiary, msg.sender, tokens);
-        // FundTransfer(msg.sender, amount, true);
     }
 
 

@@ -50,24 +50,35 @@ namespace coretests
         }
 
         [Fact]
-        public void Should_Not_Buy_Before_Sale_Date(Decimal ethAmount, UInt64 expected, String buyer)
+        public void Should_Not_Buy_Before_Sale_Date()
         {
-            var contract = GetContract(contractName);
+            var contract = GetContract(_contractName);
             var balanceFunction = contract.GetFunction("balanceOf");
 
-            var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
+            var balance = balanceFunction.CallAsync<BigInteger>(alice).Result;
             Assert.Equal(0, balance);
 
             var functionToTest = contract.GetFunction("buyTokens");
 
             Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
-            BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(ethAmount, Nethereum.Util.UnitConversion.EthUnit.Ether);
+            BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(1.0D, Nethereum.Util.UnitConversion.EthUnit.Ether);
             Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
 
             Object[] functionParams = new Object[0];
 
-            var exception = Assert.Throws<AggregateException>(() => functionToTest.SendTransactionAsync(buyer, gas, eth, functionParams).Result);
+            var exception = Assert.Throws<AggregateException>(() => functionToTest.SendTransactionAsync(alice, gas, eth, functionParams).Result);
             Assert.NotNull(exception);
+        }
+
+        [Theory]
+        [InlineData(100, 130)]
+        public void Should_Calculate_Amount(UInt64 tokens, UInt64 expected)
+        {
+            var contract = GetContract(_contractName);
+            var functionToTest = contract.GetFunction("calculateTokenAmount");
+
+            var actual = functionToTest.CallAsync<BigInteger>(tokens).Result;
+            Assert.Equal(expected, actual);
         }
     }
 }

@@ -10,11 +10,12 @@ namespace coretests
 {
     public class ERC20Tests : Helper    
     {   
-        public const String _contractName = "FollowCoin";
+        private const String _contractName = "FollowCoin";
+        private const UInt64 initalSupply = 1000000000;
 
         public ERC20Tests()
         {
-            const UInt64 initalSupply = 1000000000;
+            
             Object[] constructorParms = new Object[4] { initalSupply, "Follow Coin", 18, "FLLW" };
             DeplyContract(contractPath, _contractName, constructorParms);
         }
@@ -56,7 +57,7 @@ namespace coretests
             var functionToTest = contract.GetFunction("balanceOf");
 
             var actual = functionToTest.CallAsync<BigInteger>(owner).Result;
-            Assert.Equal(0, actual);
+            Assert.Equal(1000000000, actual);
         }
     }
 }
