@@ -24,7 +24,13 @@ namespace coretests
 
         public const String contractName = "FollowCoinPreSale";
         
-        public String contractPath = "/home/lucascullen/GitHub/followcoin-contract/bin/src/contracts/";
+        public String contractPath {
+            get{
+                var dir =System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                Console.WriteLine(dir);
+                return String.Format("{0}/../../../../bin/contracts/",dir);
+            }
+        }
 
         public String contractAddress = "";
         

@@ -10,6 +10,7 @@ namespace coretests
 {
     public class ERC20Tests : DeployTests
     {
+        const string _contractName = "FollowCoin";
         // public ERC20Tests()
         // {
         //     Object[] constructorParms = new Object[2] { 0, 0 };
@@ -39,7 +40,7 @@ namespace coretests
         [Fact]
         public void Should_Get_Token_Name()
         {
-            var contract = GetContract(contractName);
+            var contract = GetContract(_contractName);
             var functionToTest = contract.GetFunction("name");
 
             var actual = functionToTest.CallAsync<String>().Result;
@@ -49,7 +50,7 @@ namespace coretests
         [Fact]
         public void Should_Get_Token_Symbol()
         {
-            var contract = GetContract(contractName);
+            var contract = GetContract(_contractName);
             var functionToTest = contract.GetFunction("symbol");
 
             var actual = functionToTest.CallAsync<String>().Result;
@@ -59,7 +60,7 @@ namespace coretests
         [Fact]
         public void Should_Get_Initial_Total_Supply()
         {
-            var contract = GetContract(contractName);
+            var contract = GetContract(_contractName);
             var functionToTest = contract.GetFunction("totalSupply");
 
             var actual = functionToTest.CallAsync<BigInteger>().Result;
@@ -69,7 +70,7 @@ namespace coretests
         [Fact]
         public void Should_Get_Owner_Token_Balance()
         {
-            var contract = GetContract(contractName);
+            var contract = GetContract(_contractName);
             var functionToTest = contract.GetFunction("balanceOf");
 
             var actual = functionToTest.CallAsync<BigInteger>(owner).Result;
@@ -80,7 +81,7 @@ namespace coretests
         // [InlineData(1.0D, 7777, alice)]
         // public void Should_Buy_Tokens_In_PreSale1(decimal ethAmount, UInt64 expected, String user)
         // {
-        //     var contract = GetContract(contractName);
+        //     var contract = GetContract(_contractName);
         //     var balanceFunction = contract.GetFunction("balanceOf");
 
         //     var balance = balanceFunction.CallAsync<BigInteger>(user).Result;

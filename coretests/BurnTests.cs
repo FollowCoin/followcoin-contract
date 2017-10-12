@@ -10,14 +10,14 @@ namespace coretests
 {
     public class BurnTests : DeployTests
     {
-        private const String _contractName = "FollowCoinPreSale";
+        private const String _contractName = "FollowCoin";
 
 
         [Theory]
         [InlineData(1000, 7777, alice)]
         public void Should_Burn_Tokens(Decimal amount, UInt64 expected, String user)
         {
-            var contract = GetContract(_contractName);
+            var contract = GetContract(_contractName);            
             var balanceFunction = contract.GetFunction("balanceOf");
 
             var balance = balanceFunction.CallAsync<BigInteger>(user).Result;

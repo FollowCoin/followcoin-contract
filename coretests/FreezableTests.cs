@@ -10,7 +10,7 @@ namespace coretests
 {
     public class FreezableTests : DeployTests
     {
-        private const String _contractName = "FollowCoinPreSale";
+        private const String _contractName = "FollowCoin";
 
         [Fact]
         public void Should_Be_Lockeddown()
