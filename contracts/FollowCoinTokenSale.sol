@@ -82,11 +82,11 @@ contract FollowCoin is Ownable {
         string tokenSymbol
     ) {
         owner = multiSigWallet;
-        balanceOf[owner] = initialSupply;              // Give the creator all initial tokens
         totalSupply = initialSupply;                        // Update total supply
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits;                            // Amount of decimals for display purposes
+        balanceOf[owner] = initialSupply;                   // Give the creator all initial tokens
     }
 
     /**
