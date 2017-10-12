@@ -8,15 +8,6 @@ using System.Text;
 
 namespace coretests
 {
-<<<<<<< HEAD
-    public class BuyTests : DeployTests
-    {                
-        [Fact]
-        public void Should_Not_Buy_Before_Sale_Date(Decimal ethAmount, UInt64 expected, String buyer)
-        {
-            var contract = GetContract(contractName);
-            var balanceFunction = contract.GetFunction("balanceOf");
-=======
     public class BuyTests : Helper
     {
         private const String _contractName = "FollowCoinPreSale";
@@ -26,7 +17,6 @@ namespace coretests
         // {
         //     var contract = GetContract(contractName);
         //     var balanceFunction = contract.GetFunction("balanceOf");
->>>>>>> b76b1974bcd263429f59c4cbcee5b9e915ea44f2
 
         //     var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
         //     Assert.Equal(0, balance);
