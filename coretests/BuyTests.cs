@@ -8,6 +8,7 @@ using System.Text;
 
 namespace coretests
 {
+<<<<<<< HEAD
     public class BuyTests : DeployTests
     {                
         [Fact]
@@ -15,29 +16,40 @@ namespace coretests
         {
             var contract = GetContract(contractName);
             var balanceFunction = contract.GetFunction("balanceOf");
+=======
+    public class BuyTests : Helper
+    {
+        private const String _contractName = "FollowCoinPreSale";
 
-            var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
-            Assert.Equal(0, balance);
+        // [Fact]
+        // public void Should_Not_Buy_Before_Sale_Date(Decimal ethAmount, UInt64 expected, String buyer)
+        // {
+        //     var contract = GetContract(contractName);
+        //     var balanceFunction = contract.GetFunction("balanceOf");
+>>>>>>> b76b1974bcd263429f59c4cbcee5b9e915ea44f2
 
-            var functionToTest = contract.GetFunction("buyTokens");
+        //     var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
+        //     Assert.Equal(0, balance);
 
-            Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
-            BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(ethAmount, Nethereum.Util.UnitConversion.EthUnit.Ether);
-            Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
+        //     var functionToTest = contract.GetFunction("buyTokens");
 
-            Object[] functionParams = new Object[0];
-            var tx = functionToTest.SendTransactionAsync(buyer, gas, eth, functionParams).Result;
+        //     Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
+        //     BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(ethAmount, Nethereum.Util.UnitConversion.EthUnit.Ether);
+        //     Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
 
-            Assert.NotNull(tx);
+        //     Object[] functionParams = new Object[0];
+        //     var tx = functionToTest.SendTransactionAsync(buyer, gas, eth, functionParams).Result;
 
-            balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
-            Assert.Equal(expected, balance);
+        //     Assert.NotNull(tx);
 
-            var totalSoldFunction = contract.GetFunction("getTotalSold");
-            var actual = totalSoldFunction.CallAsync<BigInteger>().Result;
+        //     balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
+        //     Assert.Equal(expected, balance);
 
-            Assert.Equal(expected, actual);
-        }
+        //     var totalSoldFunction = contract.GetFunction("getTotalSold");
+        //     var actual = totalSoldFunction.CallAsync<BigInteger>().Result;
+
+        //     Assert.Equal(expected, actual);
+        // }
 
     }
 }

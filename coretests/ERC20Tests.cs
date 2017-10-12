@@ -8,9 +8,16 @@ using System.Text;
 
 namespace coretests
 {
-    public class ERC20Tests : DeployTests
-    {
-        private string _contractName = "FollowCoin";
+    public class ERC20Tests : Helper    
+    {   
+        public const String _contractName = "FollowCoin";
+
+        public ERC20Tests()
+        {
+            const UInt64 initalSupply = 1000000000;
+            Object[] constructorParms = new Object[4] { initalSupply, "Follow Coin", 18, "FLLW" };
+            DeplyContract(contractPath, _contractName, constructorParms);
+        }
 
         [Fact]
         public void Should_Get_Token_Name()
@@ -19,7 +26,7 @@ namespace coretests
             var functionToTest = contract.GetFunction("name");
 
             var actual = functionToTest.CallAsync<String>().Result;
-            Assert.Equal("Follow", actual);
+            Assert.Equal("Follow Coin", actual);
         }
 
         [Fact]
@@ -39,7 +46,7 @@ namespace coretests
             var functionToTest = contract.GetFunction("totalSupply");
 
             var actual = functionToTest.CallAsync<BigInteger>().Result;
-            Assert.Equal(330000000, actual);
+            Assert.Equal(1000000000, actual);
         }
 
         [Fact]
