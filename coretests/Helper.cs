@@ -25,7 +25,7 @@ namespace coretests
         public const String contractName = "FollowCoinPreSale";
         
         //public String contractPath = "/home/lucascullen/GitHub/followcoin-contract/bin/src/contracts/";
-        public String contractPath = "/home/lucascullen/GitHub/followcoin-contract/bin/src/contracts/";
+        public String contractPath = "/home/lucascullen/GitHub/followcoin-contract/bin/contracts/";
 
         public String contractAddress = "";
         
