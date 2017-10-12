@@ -9,13 +9,8 @@ using System.Text;
 namespace coretests
 {
     public class DeployTests : Helper
-    {
-        public DeployTests()
-        {
-           DeployFollowCoin(); 
-           DeployFollowCoinPreSale1(GetContract("FollowCoin").Address);
-        }
-
+    {      
+        
         protected void DeployFollowCoin(){
             const UInt64 initalSupply = 1000000000;
             Object[] constructorParms = new Object[4] { initalSupply, "Follow Coin", 18, "FLLW" };
