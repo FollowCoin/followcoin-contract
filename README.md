@@ -4,10 +4,9 @@ Repo for moneo job #661
 
 ## FLLW Pre Sale Details
 
-Pre-ICO date: 27th 12:00 GMT
+Pre-ICO date: 27th 12:00 GMT (Oct?)
 
 Duration: 4 weeks
-
 Min Cap: 0 ETH 
 
 Max Cap: 330 000 000 ETH

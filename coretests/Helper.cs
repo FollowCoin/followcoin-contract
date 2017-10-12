@@ -10,7 +10,11 @@ namespace coretests
     public abstract class Helper
     {
         //0x221bbb8b9b508c2841a60f862e9d03c1997097f99ee83db94e077ff180265247
-        public const String owner = "0xe2356d29d5dfecb4ee43c031204aeded24749959";
+        public const String owner = "0x4d444cdda7b70abf948da38380af64d322a24331";
+
+        public const string alice = "0xf0072559848df03140c3ab2e4f6e5f76ef55f6dc";
+
+        public const string bob = "";
 
         public static String ETH = "100000000000000000";
         public static String HALF_ETH = "50000000000000000";

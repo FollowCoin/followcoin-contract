@@ -14,6 +14,8 @@ namespace coretests
         {
             const UInt64 initalSupply = 1000000000;
 
+            //var f = Directory.GetCurrentDirectory();
+
             Object[] constructorParms = new Object[4] { initalSupply, "Follow Coin", 18, "FLLW" };
             DeplyContract(contractPath, contractName, constructorParms);
         }
