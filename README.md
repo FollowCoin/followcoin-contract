@@ -4,7 +4,7 @@ Repo for moneo job #661
 
 ## FLLW Pre Sale Details
 
-Pre-ICO date: 27th 12:00 GMT (Oct?)
+Pre-ICO date: 27th Oct 12:00 GMT 1509105600
 
 Duration: 4 weeks
 Min Cap: 0 ETH 
@@ -46,3 +46,7 @@ truffle test
 geth --fast --cache=1048 --testnet --unlock "[your_ropsten_address]" --rpc --rpcapi "eth,net,web3" --rpccorsdomain '*' --rpcaddr localhost --rpcport 8545
 
 truffle deploy --network ropsten
+
+## Notes recommendations
+
+Buy function, and a fall back function

@@ -27,7 +27,7 @@ namespace coretests
             var icoTokensLimitPerWallet = 1000000;
             var icoHardCap = 1;
             var icoSoftCap = 1;
-            var icoStartTimestamp = 1509105600;
+            var icoStartTimestamp = OCTOBER_27_2017;
             var durationInDays = 28;
             var icoTotalTokens = 330000000;
             var icoTokensPerEther = 7777;

@@ -12,34 +12,62 @@ namespace coretests
     {
         private const String _contractName = "FollowCoinPreSale";
 
-        // [Fact]
-        // public void Should_Not_Buy_Before_Sale_Date(Decimal ethAmount, UInt64 expected, String buyer)
-        // {
-        //     var contract = GetContract(contractName);
-        //     var balanceFunction = contract.GetFunction("balanceOf");
+        public BuyTests()
+        {
+           DeployFollowCoin(); 
+           DeployFollowCoinPreSale1(GetContract("FollowCoin").Address);
+        }
 
-        //     var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
-        //     Assert.Equal(0, balance);
+        protected void DeployFollowCoin(){
+            const UInt64 initalSupply = 1000000000;
+            Object[] constructorParms = new Object[4] { initalSupply, "Follow Coin", 18, "FLLW" };
+            DeplyContract(contractPath, "FollowCoin", constructorParms);
+        }
 
-        //     var functionToTest = contract.GetFunction("buyTokens");
+        protected void DeployFollowCoinPreSale1(string addressOfToken){            
+            var ifSuccessfulSendTo = owner;
+            var icoTokensLimitPerWallet = 1000000;
+            var icoHardCap = 1;
+            var icoSoftCap = 1;
+            var icoStartTimestamp = 1509105600;
+            var durationInDays = 28;
+            var icoTotalTokens = 330000000;
+            var icoTokensPerEther = 7777;
+            var addressOfTokenUsedAsReward = addressOfToken;
 
-        //     Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
-        //     BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(ethAmount, Nethereum.Util.UnitConversion.EthUnit.Ether);
-        //     Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
+            Object[] constructorParms = new Object[9] { 
+                ifSuccessfulSendTo, 
+                icoTokensLimitPerWallet, 
+                icoHardCap, 
+                icoSoftCap,
+                icoStartTimestamp,
+                durationInDays,
+                icoTotalTokens,
+                icoTokensPerEther,
+                addressOfTokenUsedAsReward
+            };
+            DeplyContract(contractPath, "FollowCoinPreSale", constructorParms);
+        }
 
-        //     Object[] functionParams = new Object[0];
-        //     var tx = functionToTest.SendTransactionAsync(buyer, gas, eth, functionParams).Result;
+        [Fact]
+        public void Should_Not_Buy_Before_Sale_Date(Decimal ethAmount, UInt64 expected, String buyer)
+        {
+            var contract = GetContract(contractName);
+            var balanceFunction = contract.GetFunction("balanceOf");
 
-        //     Assert.NotNull(tx);
+            var balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
+            Assert.Equal(0, balance);
 
-        //     balance = balanceFunction.CallAsync<BigInteger>(buyer).Result;
-        //     Assert.Equal(expected, balance);
+            var functionToTest = contract.GetFunction("buyTokens");
 
-        //     var totalSoldFunction = contract.GetFunction("getTotalSold");
-        //     var actual = totalSoldFunction.CallAsync<BigInteger>().Result;
+            Nethereum.Hex.HexTypes.HexBigInteger gas = new Nethereum.Hex.HexTypes.HexBigInteger(2000000);
+            BigInteger ethToSend = Nethereum.Util.UnitConversion.Convert.ToWei(ethAmount, Nethereum.Util.UnitConversion.EthUnit.Ether);
+            Nethereum.Hex.HexTypes.HexBigInteger eth = new Nethereum.Hex.HexTypes.HexBigInteger(ethToSend); 
 
-        //     Assert.Equal(expected, actual);
-        // }
+            Object[] functionParams = new Object[0];
 
+            var exception = Assert.Throws<AggregateException>(() => functionToTest.SendTransactionAsync(buyer, gas, eth, functionParams).Result);
+            Assert.NotNull(exception);
+        }
     }
 }

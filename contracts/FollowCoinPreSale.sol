@@ -273,18 +273,13 @@ contract FollowCoinPreSale is Haltable {
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
     }
 
-    /**
-     * Fallback function
-     *
-     * The function without name is the default function that is called whenever anyone sends funds to a contract
-     */
-    function () payable preSaleActive inNormalState {
+    function buyTokens () payable preSaleActive inNormalState {
         require(msg.value > 0);
        
         uint amount = msg.value;
         require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
 
-        uint tokens =  calculateTokenAmount(amount * tokensPerEther);
+        uint tokens = calculateTokenAmount(amount * tokensPerEther);
         require(tokensSold + tokens <= hardCap); // hardCap limit
 
         balanceOf[msg.sender] += amount;
@@ -298,6 +293,33 @@ contract FollowCoinPreSale is Haltable {
 
         tokenReward.transferFrom(beneficiary, msg.sender, tokens);
         FundTransfer(msg.sender, amount, true);
+    }
+    /**
+     * Fallback function
+     *
+     * The function without name is the default function that is called whenever anyone sends funds to a contract
+     */
+    function () payable preSaleActive inNormalState {
+        buyTokens();
+        // require(msg.value > 0);
+       
+        // uint amount = msg.value;
+        // require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
+
+        // uint tokens = calculateTokenAmount(amount * tokensPerEther);
+        // require(tokensSold + tokens <= hardCap); // hardCap limit
+
+        // balanceOf[msg.sender] += amount;
+        // amountRaised += amount;
+
+        // tokensSold += tokens;
+
+        // if (tokenReward.balanceOf(msg.sender) == 0) {
+        //     investorCount++;
+        // }
+
+        // tokenReward.transferFrom(beneficiary, msg.sender, tokens);
+        // FundTransfer(msg.sender, amount, true);
     }
 
 
@@ -342,8 +364,7 @@ contract FollowCoinPreSale is Haltable {
            // + 10%
            return tokens * 110 /100;
         }
-        else
-        {
+        else {
           return tokens;
         }
     }
