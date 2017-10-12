@@ -292,7 +292,9 @@ contract FollowCoinPreSale is Haltable {
 
         tokensSold += tokens;
 
-        if (tokenReward.balanceOf(msg.sender) == 0) investorCount++;
+        if (tokenReward.balanceOf(msg.sender) == 0) {
+            investorCount++;
+        }
 
         tokenReward.transferFrom(beneficiary, msg.sender, tokens);
         FundTransfer(msg.sender, amount, true);
@@ -330,7 +332,7 @@ contract FollowCoinPreSale is Haltable {
 
         if(soldTokens <=  10) {
           // + 30%
-          return tokens * 130 /100;
+          return tokens * 130 / 100;
         }
         else if(soldTokens <=  20) {
            // + 20%
@@ -338,7 +340,7 @@ contract FollowCoinPreSale is Haltable {
         }
         else if(soldTokens <=  70) {
            // + 10%
-           return tokens  * 110 /100;
+           return tokens * 110 /100;
         }
         else
         {
