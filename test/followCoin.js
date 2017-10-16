@@ -11,6 +11,11 @@ contract('Follow Coin Token', function(accounts) {
     this.token = await FollowCoin.new(accounts[0], initialSupply, tokenName, decimalUnits, tokenSymbol);
   });
 
+  it("should have contributorsLockdown set to true", async function () {
+    const lockdown = await this.token.contributorsLockdown();
+    assert.equal(lockdown, 1, "contributorsLockdown has wrong initial value");
+  });
+
   it("should put 1 000,000,000 FLLW to supply and in the first account", async function () {
     const balance = await this.token.balanceOf(accounts[0]);
     const supply = await this.token.totalSupply();

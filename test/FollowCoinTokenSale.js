@@ -49,9 +49,10 @@ contract('Follow Coin ICO', function (accounts) {
     this.token = await FollowCoin.new(accounts[0],initialSupply, tokenName, decimalUnits, tokenSymbol);
     const token = this.token.address;
 
-    this.crowdsale = await FollowCoinPreSale.new(beneficiary, limitPerWallet, hardCap, softCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
+    this.crowdsale = await FollowCoinPreSale.new(accounts[0], limitPerWallet, hardCap, softCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
     
     //transfer more than totalTokens to test hardcap reach properly
+    this.token.allowAccount(this.crowdsale.address, 1);
     this.token.transfer(this.crowdsale.address, web3.toWei(crowdsaleTotal, "ether")); //380000000
   });
 
@@ -120,7 +121,7 @@ contract('Follow Coin ICO', function (accounts) {
     assert.equal(balance.valueOf(), pay);
 
     const crowdsaleBalance = await this.token.balanceOf(this.crowdsale.address);
-  
+
     assert.equal(crowdsaleBalance.valueOf(), (380000000 - tokensPerEther * 1.3) * 10 ** 18);
 
     const collected = await this.crowdsale.amountRaised();

@@ -49,6 +49,7 @@ contract FollowCoin is Ownable {
     // This creates an array with all balances
     mapping (address => uint256) public balanceOf;
     mapping (address => bool) public frozenAccount;
+    mapping (address => bool) public allowedAccount;
     event FrozenFunds(address target, bool frozen);
 
 
@@ -58,7 +59,7 @@ contract FollowCoin is Ownable {
     // This notifies clients about the amount burnt
     event Burn(address indexed from, uint256 value);
 
-    bool public contributorsLockdown = false;
+    bool public contributorsLockdown = true;
 
     function setLockDown(bool lock) onlyOwner {
         contributorsLockdown = lock;
@@ -93,14 +94,14 @@ contract FollowCoin is Ownable {
      * Internal transfer, only can be called by this contract
      */
     function _transfer(address _from, address _to, uint _value) internal {
-        require(!contributorsLockdown || _from == owner);
+        require(!contributorsLockdown || _from == owner || allowedAccount[_from]);
         require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
         require(balanceOf[_from] >= _value);                // Check if the sender has enough
         require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
         require(!frozenAccount[_from]);                //Check if not frozen
         balanceOf[_from] -= _value;                         // Subtract from the sender
         balanceOf[_to] += _value;                           // Add the same to the recipient
-        Transfer(_from, _to, _value);
+        
     }
     
     /**
@@ -127,6 +128,11 @@ contract FollowCoin is Ownable {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         _transfer(_from, _to, _value);
         return true;
+    }
+
+    function allowAccount(address _target, bool allow) returns (bool success) {
+         allowedAccount[_target] = allow;
+         return true;
     }
 
     function freezeAccount(address target, bool freeze) onlyOwner {
