@@ -1,6 +1,36 @@
 pragma solidity ^0.4.13;
 
 /**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
+library SafeMath {
+  function mul(uint256 a, uint256 b) internal constant returns (uint256) {
+    uint256 c = a * b;
+    assert(a == 0 || c / a == b);
+    return c;
+  }
+
+  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    uint256 c = a / b;
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+    return c;
+  }
+
+  function sub(uint256 a, uint256 b) internal constant returns (uint256) {
+    assert(b <= a);
+    return a - b;
+  }
+
+  function add(uint256 a, uint256 b) internal constant returns (uint256) {
+    uint256 c = a + b;
+    assert(c >= a);
+    return c;
+  }
+}
+
+/**
  * @title Ownable
  * @dev The Ownable contract has an owner address, and provides basic authorization control
  * functions, this simplifies the implementation of "user permissions".
@@ -39,6 +69,8 @@ contract Ownable {
 }
 
 contract FollowCoin is Ownable {
+    using SafeMath for uint256;
+
     // Public variables of the token
     string public name;
     string public symbol;
@@ -102,10 +134,10 @@ contract FollowCoin is Ownable {
         require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
 
         require(balanceOf[_from] >= _value);                // Check if the sender has enough
-        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
+        require(balanceOf[_to].add(_value) > balanceOf[_to]); // Check for overflows
         require(!frozenAccount[_from]);                //Check if not frozen
-        balanceOf[_from] -= _value;                         // Subtract from the sender
-        balanceOf[_to] += _value;                           // Add the same to the recipient
+        balanceOf[_from] = balanceOf[_from].sub(_value);                         // Subtract from the sender
+        balanceOf[_to] = balanceOf[_to].add(_value);                           // Add the same to the recipient
 
         if (isHolder[_to] != true) {
             holders[holders.length++] = _to;
@@ -171,8 +203,8 @@ contract FollowCoin is Ownable {
     }
 
     function mint(uint256 mintedAmount) onlyOwner {
-        balanceOf[msg.sender] += mintedAmount;
-        totalSupply += mintedAmount;
+        balanceOf[msg.sender] = balanceOf[msg.sender].add(mintedAmount);
+        totalSupply  = totalSupply.add(mintedAmount);
         Transfer(0, owner, mintedAmount);
     }
 
@@ -185,8 +217,8 @@ contract FollowCoin is Ownable {
      */
     function burn(uint256 _value) onlyOwner returns (bool success) {
         require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
-        balanceOf[msg.sender] -= _value;            // Subtract from the sender
-        totalSupply -= _value;                      // Updates totalSupply
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);            // Subtract from the sender
+        totalSupply = totalSupply.sub(_value);                      // Updates totalSupply
         Burn(msg.sender, _value);
         return true;
     }
@@ -228,6 +260,8 @@ contract FollowCoin is Ownable {
  }
 
 contract FollowCoinTokenSale is Haltable {
+    using SafeMath for uint256;
+
     uint256 public constant MAX_GAS_PRICE = 50000000000 wei;
 
     address public beneficiary;
@@ -301,17 +335,17 @@ contract FollowCoinTokenSale is Haltable {
         require(msg.value > 0);
        
         uint amount = msg.value;
-        require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
+        require(balanceOf[msg.sender].add(amount) <= tokenLimitPerWallet);
 
         uint tokens =  calculateTokenAmount(amount * tokensPerEther);
         require(totalTokens >= tokens);
-        require(tokensSold + tokens <= hardCap); // hardCap limit
+        require(tokensSold.add(tokens) <= hardCap); // hardCap limit
         
-        balanceOf[msg.sender] += amount;
-        amountRaised += amount;
+        balanceOf[msg.sender] = balanceOf[msg.sender].add(amount);
+        amountRaised = amountRaised.add(amount);
 
-        tokensSold += tokens;
-        totalTokens -= tokens;
+        tokensSold = tokensSold.add(tokens);
+        totalTokens = totalTokens.sub(tokens);
 
         if (tokenReward.balanceOf(msg.sender) == 0) investorCount++;
 
@@ -339,13 +373,13 @@ contract FollowCoinTokenSale is Haltable {
     }
 
     function setSold(uint tokens) onlyOwner {
-      tokensSold += tokens;
+      tokensSold = tokensSold.add(tokens);
     }
 
 
-    function sendTokensBackToWallet(uint tokens) onlyOwner {
-      totalTokens -= tokens;
-      tokenReward.transfer(multisig, tokens);
+    function sendTokensBackToWallet() onlyOwner {
+      totalTokens = 0;
+      tokenReward.transfer(multisig, tokenReward.balanceOf(address(this)));
     }
 
     function getTokenBalance(address _from) constant returns(uint) {
@@ -353,19 +387,19 @@ contract FollowCoinTokenSale is Haltable {
     }
 
     function calculateTokenAmount(uint tokens) constant returns(uint) {
-        uint soldTokens = tokensSold * 100 / totalTokens;
+        uint soldTokens = tokensSold.mul(100).div(totalTokens);
 
         if(soldTokens <=  10) {
           // + 30%
-          return tokens * 130 / 100;
+          return tokens.mul(130).div(100);
         }
         else if(soldTokens <=  20) {
            // + 20%
-           return tokens * 120 / 100;
+           return tokens.mul(120).div(100);
         }
         else if(soldTokens <=  70) {
            // + 10%
-           return tokens * 110 / 100;
+           return tokens.mul(110).div(100);
         }
         else
         {

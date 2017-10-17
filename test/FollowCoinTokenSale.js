@@ -260,8 +260,10 @@ contract('Follow Coin ICO', function (accounts) {
   });
 
   it('should allow send FLLW back to the wallet', async function () {
-    await this.crowdsale.sendTokensBackToWallet(crowdsaleTotal * 10 ** 18);
     const balance = await this.token.balanceOf(this.crowdsale.address);
-    assert.equal(balance.toNumber(), 0, 'Incorrect balance');
+    await this.crowdsale.sendTokensBackToWallet();
+    const balance2 = await this.token.balanceOf(this.crowdsale.address);
+    
+    assert.equal(balance2.toNumber(), 0, 'Incorrect balance');
   });
 });
