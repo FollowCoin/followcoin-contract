@@ -36,7 +36,6 @@ contract Ownable {
       owner = newOwner;
     }
   }
-
 }
 
 contract FollowCoin is Ownable {
@@ -123,6 +122,7 @@ contract FollowCoin is Ownable {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
+
     function transfer(address _to, uint256 _value) public returns (bool)  {
         require(_to != address(this));
         _transfer(msg.sender, _to, _value);
@@ -160,6 +160,7 @@ contract FollowCoin is Ownable {
 
 
     function allowAccount(address _target, bool allow) onlyOwner returns (bool success) {
+
          allowedAccount[_target] = allow;
          return true;
     }
@@ -286,6 +287,7 @@ contract FollowCoinTokenSale is Haltable {
         beneficiary = tokenReward.owner();
     }
 
+
     /**
      * Fallback function
      *
@@ -318,7 +320,6 @@ contract FollowCoinTokenSale is Haltable {
         FundTransfer(msg.sender, amount, true);
     }
 
-
     // verifies that the gas price is lower than 50 gwei
     modifier validGasPrice() {
         assert(tx.gasprice <= MAX_GAS_PRICE);
@@ -340,6 +341,7 @@ contract FollowCoinTokenSale is Haltable {
     function setSold(uint tokens) onlyOwner {
       tokensSold += tokens;
     }
+
 
     function sendTokensBackToWallet(uint tokens) onlyOwner {
       totalTokens -= tokens;
@@ -363,7 +365,7 @@ contract FollowCoinTokenSale is Haltable {
         }
         else if(soldTokens <=  70) {
            // + 10%
-           return tokens  * 110 / 100;
+           return tokens * 110 / 100;
         }
         else
         {

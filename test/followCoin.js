@@ -90,7 +90,6 @@ contract('Follow Coin Token', function(accounts) {
     assert.equal(supply, num);
   });
 
-  
   it("should not allow to mint by not owner", async function() {    
     try {
       await this.token.mint(web3.toWei(100, "ether"), {from: accounts[1]});
@@ -99,7 +98,6 @@ contract('Follow Coin Token', function(accounts) {
     }
     assert.fail('should have thrown before');
   });
-
 
   it("should allow to burn by owner", async function() {
     
