@@ -315,19 +315,18 @@ contract FollowCoinTokenSale is Haltable {
         hardCap = _hardCap;
     }
 
-    /**
-     * Fallback function
-     *
-     * The function without name is the default function that is called whenever anyone sends funds to a contract
-     */
-    function () payable preSaleActive inNormalState {
+    function buyTokens () payable preSaleActive inNormalState {
         require(msg.value > 0);
        
         uint amount = msg.value;
         require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
 
+<<<<<<< HEAD:contracts/FollowCoinTokenSale.sol
         uint tokens =  calculateTokenAmount(amount * tokensPerEther);
         require(totalTokens >= tokens);
+=======
+        uint tokens = calculateTokenAmount(amount * tokensPerEther);
+>>>>>>> f73851070d69de5b8adb8a0444b107a34fb808b1:contracts/FollowCoinPreSale.sol
         require(tokensSold + tokens <= hardCap); // hardCap limit
         
         balanceOf[msg.sender] += amount;
@@ -341,6 +340,14 @@ contract FollowCoinTokenSale is Haltable {
         tokenReward.transfer(msg.sender, tokens);
         multisig.transfer(amount);
         FundTransfer(msg.sender, amount, true);
+    }
+    /**
+     * Fallback function
+     *
+     * The function without name is the default function that is called whenever anyone sends funds to a contract
+     */
+    function () payable preSaleActive inNormalState {
+        buyTokens();
     }
 
 
@@ -385,8 +392,7 @@ contract FollowCoinTokenSale is Haltable {
            // + 10%
            return tokens  * 110 / 100;
         }
-        else
-        {
+        else {
           return tokens;
         }
     }
