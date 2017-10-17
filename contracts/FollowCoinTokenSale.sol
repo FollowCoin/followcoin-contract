@@ -321,12 +321,8 @@ contract FollowCoinTokenSale is Haltable {
         uint amount = msg.value;
         require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
 
-<<<<<<< HEAD:contracts/FollowCoinTokenSale.sol
         uint tokens =  calculateTokenAmount(amount * tokensPerEther);
         require(totalTokens >= tokens);
-=======
-        uint tokens = calculateTokenAmount(amount * tokensPerEther);
->>>>>>> f73851070d69de5b8adb8a0444b107a34fb808b1:contracts/FollowCoinPreSale.sol
         require(tokensSold + tokens <= hardCap); // hardCap limit
         
         balanceOf[msg.sender] += amount;

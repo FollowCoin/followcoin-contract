@@ -53,11 +53,4 @@ dotnet test
 geth --fast --cache=1048 --testnet --unlock "[your_ropsten_address]" --rpc --rpcapi "eth,net,web3" --rpccorsdomain '*' --rpcaddr localhost --rpcport 8545
 
 truffle deploy --network ropsten
-<<<<<<< HEAD
 ```
-=======
-
-## Notes recommendations
-
-Buy function, and a fall back function
->>>>>>> f73851070d69de5b8adb8a0444b107a34fb808b1
