@@ -230,7 +230,6 @@ contract('Follow Coin ICO', function (accounts) {
     assert.fail('should have thrown before');
   });
 
-
   
   it('should not allow to exceed hard cap', async function () {
     await this.crowdsale.setSold(crowdsaleTotal * 10 ** 18);

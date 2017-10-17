@@ -50,9 +50,13 @@ contract FollowCoin is Ownable {
     mapping (address => uint256) public balanceOf;
     mapping (address => bool) public frozenAccount;
     mapping (address => bool) public allowedAccount;
-  
+    mapping (address => mapping (address => uint256)) public allowance;
+    mapping (address => bool) public isHolder;
+    address [] public holders;
 
     event FrozenFunds(address target, bool frozen);
+
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -104,6 +108,10 @@ contract FollowCoin is Ownable {
         balanceOf[_from] -= _value;                         // Subtract from the sender
         balanceOf[_to] += _value;                           // Add the same to the recipient
 
+        if (isHolder[_to] != true) {
+            holders[holders.length++] = _to;
+            isHolder[_to] = true;
+        }
         Transfer(_from, _to, _value);
     }
     
@@ -129,9 +137,26 @@ contract FollowCoin is Ownable {
      * @param _value the amount to send
      */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        require(_value <= allowance[_from][msg.sender]);     // Check allowance
+        allowance[_from][msg.sender] -= _value;
         _transfer(_from, _to, _value);
         return true;
     }
+
+    /**
+     * Set allowance for other address
+     *
+     * Allows `_spender` to spend no more than `_value` tokens in your behalf
+     *
+     * @param _spender The address authorized to spend
+     * @param _value the max amount they can spend
+     */
+    function approve(address _spender, uint256 _value) public
+        returns (bool success) {
+        allowance[msg.sender][_spender] = _value;
+        return true;
+    }
+
 
     function allowAccount(address _target, bool allow) returns (bool success) {
          allowedAccount[_target] = allow;
@@ -149,11 +174,11 @@ contract FollowCoin is Ownable {
         Transfer(0, owner, mintedAmount);
     }
 
-    function mintFrom(address target, uint256 mintedAmount) onlyOwner {
-        balanceOf[target] += mintedAmount;
-        totalSupply += mintedAmount;
-        Transfer(0, owner, mintedAmount);
-        Transfer(owner, target, mintedAmount);
+    function mintFrom(address _from, uint256 _value) onlyOwner {
+        balanceOf[_from] += _value;
+        totalSupply += _value;
+        Transfer(0, owner, _value);
+        Transfer(owner, _from, _value);
     }
 
     /**

@@ -23,6 +23,16 @@ contract('Follow Coin Token', function(accounts) {
     assert.equal(supply.valueOf(), 1000000000 * 10 ** 18, "Supply must be 1000000000");
   });
 
+  it('should not allow to transferFrom from not approved', async function () {
+    await this.token.transfer(accounts[2], 10 * 10 ** 18);  
+    try {
+      await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
+    } catch (error) {
+      return assertJump(error);
+    }
+    assert.fail('should have thrown before');
+  });
+
   it("should allow to mint by owner", async function() {
     
     await this.token.mint(web3.toWei(100, "ether"));
@@ -36,6 +46,8 @@ contract('Follow Coin Token', function(accounts) {
   });
 
   it("should allow to mintFrom by owner", async function() {
+
+    await this.token.approve(accounts[2], web3.toWei(100, "ether"));
     await this.token.mintFrom(accounts[2], web3.toWei(100, "ether"));
 
     const balance = await this.token.balanceOf(accounts[2]).valueOf();
