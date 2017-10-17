@@ -15,7 +15,7 @@ const beneficiary = web3.eth.accounts[0];
 const startTimestamp =  web3.eth.getBlock(web3.eth.blockNumber).timestamp;
 const durationTime = 28; //4 weeks
 const tokensPerEther = 7777;
-const crowdsaleTotal = 380000000;
+const crowdsaleTotal =380000000;
 
 const timeController = (() => {
 
@@ -44,14 +44,15 @@ async function advanceToBlock(number) {
 
 contract('Follow Coin ICO', function (accounts) {
   beforeEach(async function () {
-
-    this.token = await FollowCoin.new(accounts[0], initialSupply, tokenName, decimalUnits, tokenSymbol);
+    this.token = await FollowCoin.new(accounts[0],initialSupply, tokenName, decimalUnits, tokenSymbol);
     const token = this.token.address;
 
     this.crowdsale = await FollowCoinPreSale.new(accounts[0], limitPerWallet, hardCap, softCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
     
     //transfer more than totalTokens to test hardcap reach properly
     this.token.allowAccount(this.crowdsale.address, 1);
+
+    //this.token.approve(this.crowdsale.address, web3.toWei(crowdsaleTotal, "ether"), {from: accounts[0]});
     this.token.transfer(this.crowdsale.address, web3.toWei(crowdsaleTotal, "ether")); //380000000
   });
 
@@ -59,48 +60,6 @@ contract('Follow Coin ICO', function (accounts) {
     await this.crowdsale.changeMultisigWallet('0xc3a37e0f0f1288c4bf4ab5a5b60957dac0f4dd4c');
     const actual = await this.crowdsale.multisig();
     assert.equal(actual, '0xc3a37e0f0f1288c4bf4ab5a5b60957dac0f4dd4c');
-  });
-
-  // it('should allow token reward change by owner', async function () {
-  //   await this.crowdsale.changeTokenReward(200);
-  //   const actual = await this.crowdsale.tokensPerEther();
-  //   assert.equal(actual, 200);
-  // });
-
-  it('should allow token per ether change by owner', async function () {
-    await this.crowdsale.changeTokensPerEther(200);
-    const actual = await this.crowdsale.tokensPerEther();
-    assert.equal(actual, 200);
-  });
-
-  it('should allow start time change by owner', async function () {
-    await this.crowdsale.changeStartTimestamp(1514764800);
-    const actual = await this.crowdsale.startTimestamp();
-    assert.equal(actual, 1514764800);
-  });
-
-  it('should allow duration in days change by owner', async function () {
-    await this.crowdsale.changeDurationInDays(1);
-    const actual = await this.crowdsale.deadline();
-    assert.equal(actual, 1514764800);
-  });
-
-  it('should allow dead line set by owner', async function () {
-    await this.crowdsale.setCustomDeadline(1514764800);
-    const actual = await this.crowdsale.deadline();
-    assert.equal(actual, 1514764800);
-  });
-
-  it('should allow soft cap change by owner', async function () {
-    await this.crowdsale.changeSoftCap(100);
-    const actual = await this.crowdsale.softCap();
-    assert.equal(actual, 100);
-  });
-
-  it('should allow hard cap change by owner', async function () {
-    await this.crowdsale.changeHardCap(5000);
-    const actual = await this.crowdsale.hardCap();
-    assert.equal(actual, 5000);
   });
 
   it('should allow to halt by owner', async function () {
@@ -167,10 +126,10 @@ contract('Follow Coin ICO', function (accounts) {
     var pay = tokensPerEther * 1.3 * 10 ** 18;
     assert.equal(balance.valueOf(), pay);
 
-    const crowdsaleBalance = await this.token.balanceOf(this.crowdsale.address);
-
-    assert.equal(crowdsaleBalance.valueOf(), (380000000 - tokensPerEther * 1.3) * 10 ** 18);
-
+    const crowdsaleBalance = await this.crowdsale.totalTokens();
+    var paid = 330000000 - (tokensPerEther * 13 / 10);
+    assert.equal(crowdsaleBalance.valueOf(), (paid * 10) * 10 ** 17);
+    
     const collected = await this.crowdsale.amountRaised();
     assert.equal(collected.valueOf(), web3.toWei(1, "ether"));
 
@@ -277,6 +236,7 @@ contract('Follow Coin ICO', function (accounts) {
     assert.fail('should have thrown before');
   });
 
+
   it('should not allow to exceed hard cap', async function () {
     await this.crowdsale.setSold(crowdsaleTotal * 10 ** 18);
     
@@ -299,13 +259,9 @@ contract('Follow Coin ICO', function (accounts) {
     assert.fail('should have thrown before');
   });
 
-  // //Multisig
-  // it('should change multisig address', async function () {
-  //   try {
-  //     await this.crowdsale.sendTransaction({value: 0 * 10 ** 18, from: accounts[2]});
-  //   } catch (error) {
-  //     return assertJump(error);
-  //   }
-  //   assert.fail('should have thrown before');
-  // });
+  it('should allow send FLLW back to the wallet', async function () {
+    await this.crowdsale.sendTokensBackToWallet(crowdsaleTotal * 10 ** 18);
+    const balance = await this.token.balanceOf(this.crowdsale.address);
+    assert.equal(balance.toNumber(), 0, 'Incorrect balance');
+  });
 });

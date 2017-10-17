@@ -49,8 +49,13 @@ contract FollowCoin is Ownable {
     mapping (address => uint256) public balanceOf;
     mapping (address => bool) public frozenAccount;
     mapping (address => bool) public allowedAccount;
+    mapping (address => mapping (address => uint256)) public allowance;
+    mapping (address => bool) public isHolder;
+    address [] public holders;
+
     event FrozenFunds(address target, bool frozen);
 
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -95,12 +100,18 @@ contract FollowCoin is Ownable {
     function _transfer(address _from, address _to, uint _value) internal {
         require(!contributorsLockdown || _from == owner || allowedAccount[_from]);
         require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
+
         require(balanceOf[_from] >= _value);                // Check if the sender has enough
         require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
         require(!frozenAccount[_from]);                //Check if not frozen
         balanceOf[_from] -= _value;                         // Subtract from the sender
         balanceOf[_to] += _value;                           // Add the same to the recipient
-        
+
+        if (isHolder[_to] != true) {
+            holders[holders.length++] = _to;
+            isHolder[_to] = true;
+        }
+        Transfer(_from, _to, _value);
     }
     
     /**
@@ -111,7 +122,9 @@ contract FollowCoin is Ownable {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transfer(address _to, uint256 _value)  {
+
+    function transfer(address _to, uint256 _value) public returns (bool)  {
+        require(_to != address(this));
         _transfer(msg.sender, _to, _value);
     }
 
@@ -125,11 +138,29 @@ contract FollowCoin is Ownable {
      * @param _value the amount to send
      */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        require(_value <= allowance[_from][msg.sender]);     // Check allowance
+        allowance[_from][msg.sender] -= _value;
         _transfer(_from, _to, _value);
         return true;
     }
 
-    function allowAccount(address _target, bool allow) returns (bool success) {
+    /**
+     * Set allowance for other address
+     *
+     * Allows `_spender` to spend no more than `_value` tokens in your behalf
+     *
+     * @param _spender The address authorized to spend
+     * @param _value the max amount they can spend
+     */
+    function approve(address _spender, uint256 _value) public
+        returns (bool success) {
+        allowance[msg.sender][_spender] = _value;
+        return true;
+    }
+
+
+    function allowAccount(address _target, bool allow) onlyOwner returns (bool success) {
+
          allowedAccount[_target] = allow;
          return true;
     }
@@ -145,13 +176,6 @@ contract FollowCoin is Ownable {
         Transfer(0, owner, mintedAmount);
     }
 
-    function mintFrom(address target, uint256 mintedAmount) onlyOwner {
-        balanceOf[target] += mintedAmount;
-        totalSupply += mintedAmount;
-        Transfer(0, owner, mintedAmount);
-        Transfer(owner, target, mintedAmount);
-    }
-
     /**
      * Destroy tokens
      *
@@ -164,22 +188,6 @@ contract FollowCoin is Ownable {
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         Burn(msg.sender, _value);
-        return true;
-    }
-
-    /**
-     * Destroy tokens from other ccount
-     *
-     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
-     *
-     * @param _from the address of the sender
-     * @param _value the amount of money to burn
-     */
-    function burnFrom(address _from, uint256 _value) onlyOwner returns (bool success) {
-        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
-        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
-        totalSupply -= _value;                              // Update totalSupply
-        Burn(_from, _value);
         return true;
     }
 }
@@ -266,22 +274,10 @@ contract FollowCoinTokenSale is Haltable {
         tokensPerEther = icoTokensPerEther;
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
         beneficiary = tokenReward.owner();
-        
-        /*
-        multisig = 0xd603324951072bc23872dA2B6C898337cebBf21c;
-        softCap = 0; 
-        hardCap = 1000 * 1 ether;
-        deadline = now + 1 * 1 days;
-        startTimestamp = now;
-        totalTokens = 10000 * 1 ether;
-        tokenLimitPerWallet = 100 * 1 ether;
-        tokensPerEther = 10;
-        tokenReward = FollowCoin(0xe016351E7231FeCC47D5B3412A345A90f03c25f6);
-        beneficiary = tokenReward.owner();
-        */
     }
 
-    function changeMultisigWallet(address _multisig) {
+    function changeMultisigWallet(address _multisig) onlyOwner {
+        require(_multisig != address(0));
         multisig = _multisig;
     }
 
@@ -291,36 +287,17 @@ contract FollowCoinTokenSale is Haltable {
         beneficiary = tokenReward.owner();
     }
 
-    function changeTokensPerEther(uint _tokens) onlyOwner {
-        require(_tokens > 0);
-        tokensPerEther = _tokens;
+
+    /**
+     * Fallback function
+     *
+     * The function without name is the default function that is called whenever anyone sends funds to a contract
+     */
+    function () payable preSaleActive inNormalState {
+        buyTokens();
     }
 
-    function changeStartTimestamp(uint _timestamp) onlyOwner {
-        require(_timestamp > 0);
-        startTimestamp = _timestamp;
-    }
-
-    function changeDurationInDays(uint _days) onlyOwner {
-        require(_days > 0);
-        deadline = now + _days * 1 days;
-    }
-
-    function setCustomDeadline(uint _timestamp) onlyOwner {
-        deadline = _timestamp;
-    }
-
-    function changeSoftCap(uint _softCap) onlyOwner {
-        require(_softCap > 0);
-        softCap = _softCap;
-    }
-
-    function changeHardCap(uint _hardCap) onlyOwner {
-        require(_hardCap > 0);
-        hardCap = _hardCap;
-    }
-
-    function buyTokens () payable preSaleActive inNormalState {
+    function buyTokens() payable preSaleActive inNormalState {
         require(msg.value > 0);
        
         uint amount = msg.value;
@@ -342,15 +319,6 @@ contract FollowCoinTokenSale is Haltable {
         multisig.transfer(amount);
         FundTransfer(msg.sender, amount, true);
     }
-    /**
-     * Fallback function
-     *
-     * The function without name is the default function that is called whenever anyone sends funds to a contract
-     */
-    function () payable preSaleActive inNormalState {
-        buyTokens();
-    }
-
 
     // verifies that the gas price is lower than 50 gwei
     modifier validGasPrice() {
@@ -374,6 +342,12 @@ contract FollowCoinTokenSale is Haltable {
       tokensSold += tokens;
     }
 
+
+    function sendTokensBackToWallet(uint tokens) onlyOwner {
+      totalTokens -= tokens;
+      tokenReward.transfer(multisig, tokens);
+    }
+
     function getTokenBalance(address _from) constant returns(uint) {
       return tokenReward.balanceOf(_from);
     }
@@ -393,7 +367,8 @@ contract FollowCoinTokenSale is Haltable {
            // + 10%
            return tokens * 110 / 100;
         }
-        else {
+        else
+        {
           return tokens;
         }
     }
