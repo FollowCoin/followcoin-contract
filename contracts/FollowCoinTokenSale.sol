@@ -158,7 +158,7 @@ contract FollowCoin is Ownable {
     }
 
 
-    function allowAccount(address _target, bool allow) returns (bool success) {
+    function allowAccount(address _target, bool allow) onlyOwner returns (bool success) {
          allowedAccount[_target] = allow;
          return true;
     }
@@ -353,7 +353,7 @@ contract FollowCoinTokenSale is Haltable {
       _;
     }
 
-    function setSold(uint tokens) {
+    function setSold(uint tokens) onlyOwner {
       tokensSold += tokens;
     }
 

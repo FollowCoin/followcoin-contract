@@ -23,7 +23,8 @@ contract('Follow Coin Token', function(accounts) {
     assert.equal(supply.valueOf(), 1000000000 * 10 ** 18, "Supply must be 1000000000");
   });
 
-  it('should not allow to transferFrom from not approved', async function () {
+  it('should not allow to transferFrom from not approved (lockdown is on)', async function () {
+    await this.token.setLockDown(1);
     await this.token.transfer(accounts[2], 10 * 10 ** 18);  
     try {
       await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
@@ -31,6 +32,40 @@ contract('Follow Coin Token', function(accounts) {
       return assertJump(error);
     }
     assert.fail('should have thrown before');
+  });
+
+  it('should not allow to transferFrom from approved (lockdown is on)', async function () {
+    await this.token.setLockDown(1);
+    await this.token.transfer(accounts[2], 10 * 10 ** 18);  
+    try {
+      await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
+    } catch (error) {
+      return assertJump(error);
+    }
+    assert.fail('should have thrown before');
+  });
+
+  it('should not allow to transferFrom from not approved (lockdown is off)', async function () {
+    await this.token.setLockDown(0);
+    await this.token.transfer(accounts[2], 10 * 10 ** 18);  
+    try {
+      await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
+    } catch (error) {
+      return assertJump(error);
+    }
+    assert.fail('should have thrown before');
+  });
+
+  it('should allow to transferFrom from approved account (lockdown is off)', async function () {
+    await this.token.setLockDown(0);
+    await this.token.transfer(accounts[1], 10 * 10 ** 18);  
+    const balance = await this.token.balanceOf(accounts[1]);
+    await this.token.approve(accounts[2], 2 * 10 ** 18, {from: accounts[1]});
+
+    await this.token.transferFrom(accounts[1], accounts[2], 2 * 10 ** 18, {from: accounts[2]});
+    const balance2 = await this.token.balanceOf(accounts[1]);
+ 
+    assert.equal(balance - 2 * 10 ** 18, balance2);
   });
 
   it("should allow to mint by owner", async function() {
