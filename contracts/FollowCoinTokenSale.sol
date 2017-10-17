@@ -124,6 +124,7 @@ contract FollowCoin is Ownable {
      * @param _value the amount to send
      */
     function transfer(address _to, uint256 _value) public returns (bool)  {
+        require(_to != address(this));
         _transfer(msg.sender, _to, _value);
     }
 
@@ -174,13 +175,6 @@ contract FollowCoin is Ownable {
         Transfer(0, owner, mintedAmount);
     }
 
-    function mintFrom(address _from, uint256 _value) onlyOwner {
-        balanceOf[_from] += _value;
-        totalSupply += _value;
-        Transfer(0, owner, _value);
-        Transfer(owner, _from, _value);
-    }
-
     /**
      * Destroy tokens
      *
@@ -193,22 +187,6 @@ contract FollowCoin is Ownable {
         balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         Burn(msg.sender, _value);
-        return true;
-    }
-
-    /**
-     * Destroy tokens from other ccount
-     *
-     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
-     *
-     * @param _from the address of the sender
-     * @param _value the amount of money to burn
-     */
-    function burnFrom(address _from, uint256 _value) onlyOwner returns (bool success) {
-        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
-        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
-        totalSupply -= _value;                              // Update totalSupply
-        Burn(_from, _value);
         return true;
     }
 }
@@ -298,10 +276,12 @@ contract FollowCoinTokenSale is Haltable {
     }
 
     function changeMultisigWallet(address _multisig) onlyOwner {
+        require(_multisig != address(0));
         multisig = _multisig;
     }
 
     function changeTokenReward(address _token) onlyOwner {
+        require(_token != address(0));
         tokenReward = FollowCoin(_token);
         beneficiary = tokenReward.owner();
     }
@@ -312,6 +292,10 @@ contract FollowCoinTokenSale is Haltable {
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
     function () payable preSaleActive inNormalState {
+        buyTokens();
+    }
+
+    function buyTokens() payable preSaleActive inNormalState {
         require(msg.value > 0);
        
         uint amount = msg.value;
@@ -355,6 +339,11 @@ contract FollowCoinTokenSale is Haltable {
 
     function setSold(uint tokens) onlyOwner {
       tokensSold += tokens;
+    }
+
+    function sendTokensBackToWallet(uint tokens) onlyOwner {
+      totalTokens -= tokens;
+      tokenReward.transfer(multisig, tokens);
     }
 
     function getTokenBalance(address _from) constant returns(uint) {
