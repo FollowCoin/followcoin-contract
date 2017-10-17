@@ -267,19 +267,6 @@ contract FollowCoinTokenSale is Haltable {
         tokensPerEther = icoTokensPerEther;
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
         beneficiary = tokenReward.owner();
-        
-        /*
-        multisig = 0xd603324951072bc23872dA2B6C898337cebBf21c;
-        softCap = 0; 
-        hardCap = 1000 * 1 ether;
-        deadline = now + 1 * 1 days;
-        startTimestamp = now;
-        totalTokens = 10000 * 1 ether;
-        tokenLimitPerWallet = 100 * 1 ether;
-        tokensPerEther = 10;
-        tokenReward = FollowCoin(0xe016351E7231FeCC47D5B3412A345A90f03c25f6);
-        beneficiary = tokenReward.owner();
-        */
     }
 
     function changeMultisigWallet(address _multisig) onlyOwner {
@@ -289,30 +276,6 @@ contract FollowCoinTokenSale is Haltable {
     function changeTokenReward(address _token) onlyOwner {
         tokenReward = FollowCoin(_token);
         beneficiary = tokenReward.owner();
-    }
-
-    function changeTokensPerEther(uint _tokens) onlyOwner {
-        tokensPerEther = _tokens;
-    }
-
-    function changeStartTimestamp(uint _timestamp) onlyOwner {
-        startTimestamp = _timestamp;
-    }
-
-    function changeDurationInDays(uint _days) onlyOwner {
-        deadline = now + _days * 1 days;
-    }
-
-    function setCustomDeadline(uint _timestamp) onlyOwner {
-        deadline = _timestamp;
-    }
-
-    function changeSoftCap(uint _softCap) onlyOwner {
-        softCap = _softCap;
-    }
-
-    function changeHardCap(uint _hardCap) onlyOwner {
-        hardCap = _hardCap;
     }
 
     /**
