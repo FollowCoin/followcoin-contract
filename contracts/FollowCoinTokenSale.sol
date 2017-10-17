@@ -50,8 +50,9 @@ contract FollowCoin is Ownable {
     mapping (address => uint256) public balanceOf;
     mapping (address => bool) public frozenAccount;
     mapping (address => bool) public allowedAccount;
-    event FrozenFunds(address target, bool frozen);
+  
 
+    event FrozenFunds(address target, bool frozen);
 
     // This generates a public event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -96,12 +97,14 @@ contract FollowCoin is Ownable {
     function _transfer(address _from, address _to, uint _value) internal {
         require(!contributorsLockdown || _from == owner || allowedAccount[_from]);
         require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
+
         require(balanceOf[_from] >= _value);                // Check if the sender has enough
         require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
         require(!frozenAccount[_from]);                //Check if not frozen
         balanceOf[_from] -= _value;                         // Subtract from the sender
         balanceOf[_to] += _value;                           // Add the same to the recipient
-        
+
+        Transfer(_from, _to, _value);
     }
     
     /**
@@ -112,7 +115,7 @@ contract FollowCoin is Ownable {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transfer(address _to, uint256 _value)  {
+    function transfer(address _to, uint256 _value) public returns (bool)  {
         _transfer(msg.sender, _to, _value);
     }
 
