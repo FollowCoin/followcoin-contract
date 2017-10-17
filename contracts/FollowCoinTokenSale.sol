@@ -1,156 +1,5 @@
 pragma solidity ^0.4.13;
 
-contract Owned {
-    address public owner;
-
-    function Owned() {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner {
-        require(msg.sender == owner);
-        _;
-    }
-
-    function transferOwnership(address newOwner) onlyOwner {
-        owner = newOwner;
-    }
-}
-
-contract FollowCoin is Owned {
-    // Public variables of the token
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    uint256 public totalSupply;
-
-    // This creates an array with all balances
-    mapping (address => uint256) public balanceOf;
-    mapping (address => bool) public frozenAccount;
-    event FrozenFunds(address target, bool frozen);
-
-
-    // This generates a public event on the blockchain that will notify clients
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-    // This notifies clients about the amount burnt
-    event Burn(address indexed from, uint256 value);
-
-    bool public contributorsLockdown = true;
-
-    function setLockDown(bool lock) onlyOwner {
-        contributorsLockdown = lock;
-    }
-
-    modifier coinsLocked() {
-      require(!contributorsLockdown || msg.sender == owner);
-      _;
-    }
-
-    /**
-     * Constructor function
-     *
-     * Initializes contract with initial supply tokens to the creator of the contract
-     */
-    function FollowCoin(
-        uint256 initialSupply,
-        string tokenName,
-        uint8 decimalUnits,
-        string tokenSymbol
-    ) {
-        owner = msg.sender;
-        balanceOf[msg.sender] = initialSupply;              // Give the creator all initial tokens
-        totalSupply = initialSupply;                        // Update total supply
-        name = tokenName;                                   // Set the name for display purposes
-        symbol = tokenSymbol;                               // Set the symbol for display purposes
-        decimals = decimalUnits;                            // Amount of decimals for display purposes
-    }
-
-    /**
-     * Internal transfer, only can be called by this contract
-     */
-    function _transfer(address _from, address _to, uint _value) internal {
-        require(!contributorsLockdown || _from == owner);
-        require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
-        require(balanceOf[_from] >= _value);                // Check if the sender has enough
-        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
-        require(!frozenAccount[msg.sender]); //Check if not frozen
-        balanceOf[_from] -= _value;                         // Subtract from the sender
-        balanceOf[_to] += _value;                           // Add the same to the recipient
-        Transfer(_from, _to, _value);
-    }
-    
-    /**
-     * Transfer tokens
-     *
-     * Send `_value` tokens to `_to` from your account
-     *
-     * @param _to The address of the recipient
-     * @param _value the amount to send
-     */
-    function transfer(address _to, uint256 _value)  {
-        _transfer(msg.sender, _to, _value);
-    }
-
-    /**
-     * Transfer tokens from other address
-     *
-     * Send `_value` tokens to `_to` in behalf of `_from`
-     *
-     * @param _from The address of the sender
-     * @param _to The address of the recipient
-     * @param _value the amount to send
-     */
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        _transfer(_from, _to, _value);
-        return true;
-    }
-
-    function freezeAccount(address target, bool freeze) onlyOwner {
-        frozenAccount[target] = freeze;
-        FrozenFunds(target, freeze);
-    }
-
-
-    function mintToken(address target, uint256 mintedAmount) onlyOwner {
-        balanceOf[target] += mintedAmount;
-        totalSupply += mintedAmount;
-        Transfer(0, owner, mintedAmount);
-        Transfer(owner, target, mintedAmount);
-    }
-
-    /**
-     * Destroy tokens
-     *
-     * Remove `_value` tokens from the system irreversibly
-     *
-     * @param _value the amount of money to burn
-     */
-    function burn(uint256 _value) onlyOwner returns (bool success) {
-        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
-        balanceOf[msg.sender] -= _value;            // Subtract from the sender
-        totalSupply -= _value;                      // Updates totalSupply
-        Burn(msg.sender, _value);
-        return true;
-    }
-
-    /**
-     * Destroy tokens from other ccount
-     *
-     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
-     *
-     * @param _from the address of the sender
-     * @param _value the amount of money to burn
-     */
-    function burnFrom(address _from, uint256 _value) onlyOwner returns (bool success) {
-        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
-        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
-        totalSupply -= _value;                              // Update totalSupply
-        Burn(_from, _value);
-        return true;
-    }
-}
-
 /**
  * @title Ownable
  * @dev The Ownable contract has an owner address, and provides basic authorization control
@@ -190,6 +39,152 @@ contract Ownable {
 
 }
 
+contract FollowCoin is Ownable {
+    // Public variables of the token
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
+
+    // This creates an array with all balances
+    mapping (address => uint256) public balanceOf;
+    mapping (address => bool) public frozenAccount;
+    mapping (address => bool) public allowedAccount;
+    event FrozenFunds(address target, bool frozen);
+
+
+    // This generates a public event on the blockchain that will notify clients
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    // This notifies clients about the amount burnt
+    event Burn(address indexed from, uint256 value);
+
+    bool public contributorsLockdown = true;
+
+    function setLockDown(bool lock) onlyOwner {
+        contributorsLockdown = lock;
+    }
+
+    modifier coinsLocked() {
+      require(!contributorsLockdown || msg.sender == owner);
+      _;
+    }
+
+    /**
+     * Constructor function
+     *
+     * Initializes contract with initial supply tokens to the creator of the contract
+     */
+    function FollowCoin(
+        address multiSigWallet,
+        uint256 initialSupply,
+        string tokenName,
+        uint8 decimalUnits,
+        string tokenSymbol
+    ) {
+        owner = multiSigWallet;
+        totalSupply = initialSupply;                        // Update total supply
+        name = tokenName;                                   // Set the name for display purposes
+        symbol = tokenSymbol;                               // Set the symbol for display purposes
+        decimals = decimalUnits;                            // Amount of decimals for display purposes
+        balanceOf[owner] = initialSupply;                   // Give the creator all initial tokens
+    }
+
+    /**
+     * Internal transfer, only can be called by this contract
+     */
+    function _transfer(address _from, address _to, uint _value) internal {
+        require(!contributorsLockdown || _from == owner || allowedAccount[_from]);
+        require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
+        require(balanceOf[_from] >= _value);                // Check if the sender has enough
+        require(balanceOf[_to] + _value > balanceOf[_to]); // Check for overflows
+        require(!frozenAccount[_from]);                //Check if not frozen
+        balanceOf[_from] -= _value;                         // Subtract from the sender
+        balanceOf[_to] += _value;                           // Add the same to the recipient
+        
+    }
+    
+    /**
+     * Transfer tokens
+     *
+     * Send `_value` tokens to `_to` from your account
+     *
+     * @param _to The address of the recipient
+     * @param _value the amount to send
+     */
+    function transfer(address _to, uint256 _value)  {
+        _transfer(msg.sender, _to, _value);
+    }
+
+    /**
+     * Transfer tokens from other address
+     *
+     * Send `_value` tokens to `_to` in behalf of `_from`
+     *
+     * @param _from The address of the sender
+     * @param _to The address of the recipient
+     * @param _value the amount to send
+     */
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        _transfer(_from, _to, _value);
+        return true;
+    }
+
+    function allowAccount(address _target, bool allow) returns (bool success) {
+         allowedAccount[_target] = allow;
+         return true;
+    }
+
+    function freezeAccount(address target, bool freeze) onlyOwner {
+        frozenAccount[target] = freeze;
+        FrozenFunds(target, freeze);
+    }
+
+    function mint(uint256 mintedAmount) onlyOwner {
+        balanceOf[msg.sender] += mintedAmount;
+        totalSupply += mintedAmount;
+        Transfer(0, owner, mintedAmount);
+    }
+
+    function mintFrom(address target, uint256 mintedAmount) onlyOwner {
+        balanceOf[target] += mintedAmount;
+        totalSupply += mintedAmount;
+        Transfer(0, owner, mintedAmount);
+        Transfer(owner, target, mintedAmount);
+    }
+
+    /**
+     * Destroy tokens
+     *
+     * Remove `_value` tokens from the system irreversibly
+     *
+     * @param _value the amount of money to burn
+     */
+    function burn(uint256 _value) onlyOwner returns (bool success) {
+        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
+        balanceOf[msg.sender] -= _value;            // Subtract from the sender
+        totalSupply -= _value;                      // Updates totalSupply
+        Burn(msg.sender, _value);
+        return true;
+    }
+
+    /**
+     * Destroy tokens from other ccount
+     *
+     * Remove `_value` tokens from the system irreversibly on behalf of `_from`.
+     *
+     * @param _from the address of the sender
+     * @param _value the amount of money to burn
+     */
+    function burnFrom(address _from, uint256 _value) onlyOwner returns (bool success) {
+        require(balanceOf[_from] >= _value);                // Check if the targeted balance is enough
+        balanceOf[_from] -= _value;                         // Subtract from the targeted balance
+        totalSupply -= _value;                              // Update totalSupply
+        Burn(_from, _value);
+        return true;
+    }
+}
+
 
 /*
  * Haltable
@@ -225,10 +220,11 @@ contract Ownable {
 
  }
 
-contract FollowCoinPreSale is Haltable {
+contract FollowCoinTokenSale is Haltable {
     uint256 public constant MAX_GAS_PRICE = 50000000000 wei;
 
     address public beneficiary;
+    address public multisig;
     uint public tokenLimitPerWallet;
     uint public hardCap;
     uint public softCap;
@@ -242,7 +238,6 @@ contract FollowCoinPreSale is Haltable {
     FollowCoin public tokenReward;
     mapping(address => uint256) public balanceOf;
 
-    event GoalReached(address _beneficiary, uint _amountRaised);
     event FundTransfer(address backer, uint amount, bool isContribution);
 
     /**
@@ -250,8 +245,8 @@ contract FollowCoinPreSale is Haltable {
      *
      * Setup the owner
      */
-    function FollowCoinPreSale(
-        address ifSuccessfulSendTo,
+    function FollowCoinTokenSale(
+        address multiSigWallet,
         uint icoTokensLimitPerWallet,
         uint icoHardCap,
         uint icoSoftCap,
@@ -259,10 +254,10 @@ contract FollowCoinPreSale is Haltable {
         uint durationInDays,
         uint icoTotalTokens,
         uint icoTokensPerEther,
-        address addressOfTokenUsedAsReward
+        address addressOfTokenUsedAsReward 
     ) {
-
-        beneficiary = ifSuccessfulSendTo;
+        multisig = multiSigWallet;
+        owner = multiSigWallet;
         softCap = icoSoftCap; 
         hardCap = icoHardCap;
         deadline = icoStartTimestamp + durationInDays * 1 days;
@@ -271,6 +266,53 @@ contract FollowCoinPreSale is Haltable {
         tokenLimitPerWallet = icoTokensLimitPerWallet;
         tokensPerEther = icoTokensPerEther;
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
+        beneficiary = tokenReward.owner();
+        
+        /*
+        multisig = 0xd603324951072bc23872dA2B6C898337cebBf21c;
+        softCap = 0; 
+        hardCap = 1000 * 1 ether;
+        deadline = now + 1 * 1 days;
+        startTimestamp = now;
+        totalTokens = 10000 * 1 ether;
+        tokenLimitPerWallet = 100 * 1 ether;
+        tokensPerEther = 10;
+        tokenReward = FollowCoin(0xe016351E7231FeCC47D5B3412A345A90f03c25f6);
+        beneficiary = tokenReward.owner();
+        */
+    }
+
+    function changeMultisigWallet(address _multisig) onlyOwner {
+        multisig = _multisig;
+    }
+
+    function changeTokenReward(address _token) onlyOwner {
+        tokenReward = FollowCoin(_token);
+        beneficiary = tokenReward.owner();
+    }
+
+    function changeTokensPerEther(uint _tokens) onlyOwner {
+        tokensPerEther = _tokens;
+    }
+
+    function changeStartTimestamp(uint _timestamp) onlyOwner {
+        startTimestamp = _timestamp;
+    }
+
+    function changeDurationInDays(uint _days) onlyOwner {
+        deadline = now + _days * 1 days;
+    }
+
+    function setCustomDeadline(uint _timestamp) onlyOwner {
+        deadline = _timestamp;
+    }
+
+    function changeSoftCap(uint _softCap) onlyOwner {
+        softCap = _softCap;
+    }
+
+    function changeHardCap(uint _hardCap) onlyOwner {
+        hardCap = _hardCap;
     }
 
     /**
@@ -285,18 +327,19 @@ contract FollowCoinPreSale is Haltable {
         require(balanceOf[msg.sender] + amount <= tokenLimitPerWallet);
 
         uint tokens =  calculateTokenAmount(amount * tokensPerEther);
+        require(totalTokens >= tokens);
         require(tokensSold + tokens <= hardCap); // hardCap limit
-
+        
         balanceOf[msg.sender] += amount;
         amountRaised += amount;
 
         tokensSold += tokens;
+        totalTokens -= tokens;
 
-        if (tokenReward.balanceOf(msg.sender) == 0) {
-            investorCount++;
-        }
+        if (tokenReward.balanceOf(msg.sender) == 0) investorCount++;
 
-        tokenReward.transferFrom(beneficiary, msg.sender, tokens);
+        tokenReward.transfer(msg.sender, tokens);
+        multisig.transfer(amount);
         FundTransfer(msg.sender, amount, true);
     }
 
@@ -336,11 +379,11 @@ contract FollowCoinPreSale is Haltable {
         }
         else if(soldTokens <=  20) {
            // + 20%
-           return tokens * 120 /100;
+           return tokens * 120 / 100;
         }
         else if(soldTokens <=  70) {
            // + 10%
-           return tokens * 110 /100;
+           return tokens  * 110 / 100;
         }
         else
         {

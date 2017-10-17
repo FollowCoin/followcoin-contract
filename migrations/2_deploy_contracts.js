@@ -1,5 +1,5 @@
 var FollowCoin = artifacts.require("./FollowCoin.sol");
-var FollowCoinPreSale = artifacts.require("./FollowCoinPreSale.sol");
+var FollowCoinTokenSale = artifacts.require("./FollowCoinTokenSale.sol");
 
 module.exports = function(deployer) {
   const initialSupply = web3.toWei(1000000000, "ether")
@@ -16,6 +16,6 @@ module.exports = function(deployer) {
     const startTimestamp =  web3.eth.getBlock(web3.eth.blockNumber).timestamp;
     const durationTime = 28; //4 weeks
     const tokensPerEther = 7777;
-    deployer.deploy(FollowCoinPreSale, beneficiary, limitPerWallet, hardCap, softCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
+    deployer.deploy(FollowCoinTokenSale, beneficiary, limitPerWallet, hardCap, softCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
   });
 };

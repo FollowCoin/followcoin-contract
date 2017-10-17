@@ -1,7 +1,5 @@
 # FollowCoin PRE ICO
 
-Repo for moneo job #661
-
 ## FLLW Pre Sale Details
 
 Pre-ICO date: 27th 12:00 GMT

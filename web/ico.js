@@ -347,7 +347,7 @@ const abi = [
     }
   ];
 const targetApi = 'https://rinkeby.infura.io/';
-const contractAddress = '0x6655D1DfaAA46B9Eb97924A3d4b2272e767a620d';
+const contractAddress = '0xCf50C78D098811f02cb069fD8a09f508D1CaC58d';
 
 /// getting contract
 const web3 = new Web3(new Web3.providers.HttpProvider(targetApi));
