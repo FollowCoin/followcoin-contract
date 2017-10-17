@@ -37,7 +37,7 @@ testrpc --account="0x401c856b9b2b12334d391ebc9499857cc42e99acd089585fd916b19dab1
 ```
 
 ## Truffle tests
-Note, issues with assertJump
+Note:  Must upgrade 
 
 ## .net core tests
 Download the 2.0 sdk

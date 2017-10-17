@@ -36,7 +36,6 @@ contract Ownable {
       owner = newOwner;
     }
   }
-
 }
 
 contract FollowCoin is Ownable {
@@ -282,24 +281,28 @@ contract FollowCoinTokenSale is Haltable {
         */
     }
 
-    function changeMultisigWallet(address _multisig) onlyOwner {
+    function changeMultisigWallet(address _multisig) {
         multisig = _multisig;
     }
 
     function changeTokenReward(address _token) onlyOwner {
+        require(_token != address(0));
         tokenReward = FollowCoin(_token);
         beneficiary = tokenReward.owner();
     }
 
     function changeTokensPerEther(uint _tokens) onlyOwner {
+        require(_tokens > 0);
         tokensPerEther = _tokens;
     }
 
     function changeStartTimestamp(uint _timestamp) onlyOwner {
+        require(_timestamp > 0);
         startTimestamp = _timestamp;
     }
 
     function changeDurationInDays(uint _days) onlyOwner {
+        require(_days > 0);
         deadline = now + _days * 1 days;
     }
 
@@ -308,10 +311,12 @@ contract FollowCoinTokenSale is Haltable {
     }
 
     function changeSoftCap(uint _softCap) onlyOwner {
+        require(_softCap > 0);
         softCap = _softCap;
     }
 
     function changeHardCap(uint _hardCap) onlyOwner {
+        require(_hardCap > 0);
         hardCap = _hardCap;
     }
 
@@ -365,7 +370,7 @@ contract FollowCoinTokenSale is Haltable {
       _;
     }
 
-    function setSold(uint tokens) {
+    function setSold(uint tokens) onlyOwner {
       tokensSold += tokens;
     }
 
@@ -386,7 +391,7 @@ contract FollowCoinTokenSale is Haltable {
         }
         else if(soldTokens <=  70) {
            // + 10%
-           return tokens  * 110 / 100;
+           return tokens * 110 / 100;
         }
         else {
           return tokens;
