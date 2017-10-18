@@ -203,7 +203,7 @@ contract('Follow Coin ICO', function (accounts) {
   });
 
   it('should be sold with +20% bonus if totalSold 10%, 20%', async function () {
-    var _totalTokens = 0.15 * 330000000 * 10 ** 18;
+    var _totalTokens = (0.15 * 330000000) * 10 ** 18;
     await this.crowdsale.setSold(_totalTokens);
 
     await this.crowdsale.sendTransaction({value: web3.toWei(1, 'ether'), from: accounts[2]});
@@ -212,8 +212,40 @@ contract('Follow Coin ICO', function (accounts) {
     assert.equal(balance.toNumber(), num, 'Buyer one token balance mismatch');
   });
 
+  it('should be sold with +30% bonus if totalSold < 10%, and +20% bonus if totalSold [10%, 20%]', async function () {
+    var _totalTokens = (33000000 - 7777) * 10 ** 18;
+    await this.crowdsale.setSold(_totalTokens);
+
+    await this.crowdsale.sendTransaction({value: web3.toWei(2, 'ether'), from: accounts[2]});
+    var num = (tokensPerEther * 13 / 100) + (tokensPerEther * 12 / 100);
+    const balance = await this.token.balanceOf(accounts[2]).valueOf();
+    assert.equal(balance.toNumber(), num  * 10 ** 19, 'Buyer one token balance mismatch');
+  });
+
+
+ it('should be sold with +20% bonus if totalSold [10%, 20%] and +10% if totalSold > 20%', async function () {
+    var _totalTokens = (66000000 - 7777) * 10 ** 18;
+    await this.crowdsale.setSold(_totalTokens);
+
+    await this.crowdsale.sendTransaction({value: web3.toWei(2, 'ether'), from: accounts[2]});
+    var num = (tokensPerEther * 12 / 100) + (tokensPerEther * 11 / 100);
+    const balance = await this.token.balanceOf(accounts[2]).valueOf();
+    assert.equal(balance.toNumber(), num  * 10 ** 19, 'Buyer one token balance mismatch');
+  });
+
+  it('should be sold with +10% bonus if totalSold [20%, 70%] and no bonus if totalSold > 70%', async function () {
+    var _totalTokens = (231000000 - 7777) * 10 ** 18;
+    await this.crowdsale.setSold(_totalTokens);
+
+    await this.crowdsale.sendTransaction({value: web3.toWei(2, 'ether'), from: accounts[2]});
+    var num = (tokensPerEther * 11 / 100) + (tokensPerEther * 10 / 100);
+    const balance = await this.token.balanceOf(accounts[2]).valueOf();
+    assert.equal(balance.toNumber(), num  * 10 ** 19, 'Buyer one token balance mismatch');
+  });
+
+
   it('should be sold with +10% bonus if totalSold 20%, 70%', async function () {
-    var _totalTokens = 0.30 * 330000000 * 10 ** 18;
+    var _totalTokens = (0.30 * 330000000) * 10 ** 18;
     await this.crowdsale.setSold(_totalTokens);
 
     await this.crowdsale.sendTransaction({value: web3.toWei(1, 'ether'), from: accounts[2]});

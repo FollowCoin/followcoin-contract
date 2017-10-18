@@ -337,7 +337,7 @@ contract FollowCoinTokenSale is Haltable {
         uint amount = msg.value;
         require(balanceOf[msg.sender].add(amount) <= tokenLimitPerWallet);
 
-        uint tokens =  calculateTokenAmount(amount * tokensPerEther);
+        uint tokens =  calculateTokenAmount(amount.mul(tokensPerEther));
         require(totalTokens >= tokens);
         require(tokensSold.add(tokens) <= hardCap); // hardCap limit
         
@@ -386,24 +386,67 @@ contract FollowCoinTokenSale is Haltable {
       return tokenReward.balanceOf(_from);
     }
 
-    function calculateTokenAmount(uint tokens) constant returns(uint) {
+    function getRate(uint tokens, uint bonus) constant returns(uint) {
+        return tokens.mul(bonus.add(100)).div(100);
+    }
+
+    function calculateTokenAmount(uint256 tokens) constant returns(uint256) {
         uint soldTokens = tokensSold.mul(100).div(totalTokens);
 
-        if(soldTokens <=  10) {
-          // + 30%
-          return tokens.mul(130).div(100);
+        uint _range10 = totalTokens.mul(10).div(100); //10%
+        uint _range20 = totalTokens.mul(20).div(100); //20%
+        uint _range70 = totalTokens.mul(70).div(100); //70%
+
+       
+        uint _tokens10 = 0;
+        uint _tokens20 = 0;
+        uint _tokens70 = 0;
+
+      
+        uint _total = tokens.add(tokensSold);
+
+        if(_range70 < _total) {
+            _tokens70 = _total.sub(_range70);
+
+            if(tokensSold > _range70)
+                _tokens70 = _total.sub(tokensSold.sub(_range70));
+
+            tokens = tokens.sub(_tokens70);
         }
-        else if(soldTokens <=  20) {
-           // + 20%
-           return tokens.mul(120).div(100);
+
+        _total = tokens.add(tokensSold);
+        if(_range20 < _total && tokensSold < _range20) {
+            _tokens20 = _total.sub(_range20);
+
+            if(tokensSold > _range20)
+                _tokens20 = _total.sub(tokensSold.sub(_range20));
+
+
+            tokens = tokens.sub(_tokens20);
         }
-        else if(soldTokens <=  70) {
-           // + 10%
-           return tokens.mul(110).div(100);
+
+        
+        _total = tokens.add(tokensSold);
+        if(_range10 < _total && tokensSold < _range10) {
+            _tokens10 = _total.sub(_range10);
+
+            if(tokensSold > _range10)
+                _tokens10 = _tokens10.sub(tokensSold.sub(_range10));
+
+        
+            tokens = tokens.sub(_tokens10);
         }
-        else
-        {
-          return tokens;
-        }
+
+        uint rate = 0;
+        if(soldTokens < 10) rate = 30;
+        else if(soldTokens < 20) rate = 20;
+        else if(soldTokens < 70) rate = 10; 
+
+        tokens = getRate(tokens, rate);
+        tokens = tokens.add(getRate(_tokens10, 20));
+        tokens = tokens.add(getRate(_tokens20, 10));
+        tokens = tokens.add(_tokens70);
+        
+        return tokens;
     }
 }
