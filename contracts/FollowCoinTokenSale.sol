@@ -262,7 +262,7 @@ contract FollowCoin is Ownable {
 contract FollowCoinTokenSale is Haltable {
     using SafeMath for uint256;
 
-    uint256 public constant MAX_GAS_PRICE = 300000000000000 wei;
+    uint256 public constant MAX_GAS_PRICE = 500000000000 wei; //500 Gwei
 
     address public beneficiary;
     address public multisig;
