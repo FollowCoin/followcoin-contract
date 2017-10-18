@@ -262,7 +262,7 @@ contract FollowCoin is Ownable {
 contract FollowCoinTokenSale is Haltable {
     using SafeMath for uint256;
 
-    uint256 public constant MAX_GAS_PRICE = 50000000000 wei;
+    uint256 public constant MAX_GAS_PRICE = 300000000000000 wei;
 
     address public beneficiary;
     address public multisig;
@@ -289,7 +289,6 @@ contract FollowCoinTokenSale is Haltable {
         address multiSigWallet,
         uint icoTokensLimitPerWallet,
         uint icoHardCap,
-        uint icoSoftCap,
         uint icoStartTimestamp,
         uint durationInDays,
         uint icoTotalTokens,
@@ -325,11 +324,11 @@ contract FollowCoinTokenSale is Haltable {
      *
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
-    function () payable preSaleActive inNormalState {
+    function () payable validGasPrice preSaleActive inNormalState {
         buyTokens();
     }
 
-    function buyTokens() payable preSaleActive inNormalState {
+    function buyTokens() payable validGasPrice preSaleActive inNormalState {
         require(msg.value > 0);
        
         uint amount = msg.value;
