@@ -47,7 +47,7 @@ contract('Follow Coin ICO', function (accounts) {
     this.token = await FollowCoin.new(accounts[0],initialSupply, tokenName, decimalUnits, tokenSymbol);
     const token = this.token.address;
 
-    this.crowdsale = await FollowCoinPreSale.new(accounts[0], limitPerWallet, hardCap, softCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
+    this.crowdsale = await FollowCoinPreSale.new(accounts[0], limitPerWallet, hardCap, startTimestamp,  durationTime, totalTokens, tokensPerEther, token);
     
     //transfer more than totalTokens to test hardcap reach properly
     this.token.allowAccount(this.crowdsale.address, 1);
