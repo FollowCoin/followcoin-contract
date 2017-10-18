@@ -268,7 +268,6 @@ contract FollowCoinTokenSale is Haltable {
     address public multisig;
     uint public tokenLimitPerWallet;
     uint public hardCap;
-    uint public softCap;
     uint public amountRaised;
     uint public totalTokens;
     uint public tokensSold = 0;
@@ -299,7 +298,6 @@ contract FollowCoinTokenSale is Haltable {
     ) {
         multisig = multiSigWallet;
         owner = multiSigWallet;
-        softCap = icoSoftCap; 
         hardCap = icoHardCap;
         deadline = icoStartTimestamp + durationInDays * 1 days;
         startTimestamp = icoStartTimestamp;
