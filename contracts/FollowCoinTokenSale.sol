@@ -68,26 +68,43 @@ contract Ownable {
   }
 }
 
-contract FollowCoin is Ownable {
+/**
+ * @title ERC20Basic
+ * @dev Simpler version of ERC20 interface
+ * @dev see https://github.com/ethereum/EIPs/issues/179
+ */
+contract ERC20Basic {
+  uint256 public totalSupply;
+  function balanceOf(address who) constant returns (uint256);
+  function transfer(address to, uint256 value) returns (bool);
+  event Transfer(address indexed from, address indexed to, uint256 value);
+}
+
+/**
+ * @title ERC20 interface
+ * @dev see https://github.com/ethereum/EIPs/issues/20
+ */
+contract ERC20 is ERC20Basic {
+  function allowance(address owner, address spender) constant returns (uint256);
+  function transferFrom(address from, address to, uint256 value) returns (bool);
+  function approve(address spender, uint256 value) returns (bool);
+  event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
+contract FollowCoin is Ownable, ERC20 {
     using SafeMath for uint256;
 
     // Public variables of the token
     string public name;
     string public symbol;
     uint8 public decimals;
-    uint256 public totalSupply;
-
+    
     // This creates an array with all balances
-    mapping (address => uint256) public balanceOf;
+    mapping (address => uint256) public balances;
     mapping (address => bool) public allowedAccount;
     mapping (address => mapping (address => uint256)) public allowance;
     mapping (address => bool) public isHolder;
     address [] public holders;
-
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    // This generates a public event on the blockchain that will notify clients
-    event Transfer(address indexed from, address indexed to, uint256 value);
 
     // This notifies clients about the amount burnt
     event Burn(address indexed from, uint256 value);
@@ -120,7 +137,7 @@ contract FollowCoin is Ownable {
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits;                            // Amount of decimals for display purposes
-        balanceOf[owner] = initialSupply;                   // Give the creator all initial tokens
+        balances[owner] = initialSupply;                   // Give the creator all initial tokens
     }
 
     /**
@@ -130,10 +147,10 @@ contract FollowCoin is Ownable {
         require(!contributorsLockdown || _from == owner || allowedAccount[_from]);
         require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
 
-        require(balanceOf[_from] >= _value);                // Check if the sender has enough
-        require(balanceOf[_to].add(_value) > balanceOf[_to]); // Check for overflows
-        balanceOf[_from] = balanceOf[_from].sub(_value);                         // Subtract from the sender
-        balanceOf[_to] = balanceOf[_to].add(_value);                           // Add the same to the recipient
+        require(balanceOf(_from) >= _value);                // Check if the sender has enough
+        require(balanceOf(_to).add(_value) > balanceOf(_to)); // Check for overflows
+        balances[_from] = balanceOf(_from).sub(_value);                         // Subtract from the sender
+        balances[_to] = balanceOf(_to).add(_value);                           // Add the same to the recipient
 
         if (isHolder[_to] != true) {
             holders[holders.length++] = _to;
@@ -172,6 +189,11 @@ contract FollowCoin is Ownable {
         return true;
     }
 
+
+    function balanceOf(address _owner) constant returns (uint256 balance) {
+        return balances[_owner];
+    }
+
     /**
      * Set allowance for other address
      *
@@ -186,6 +208,10 @@ contract FollowCoin is Ownable {
         return true;
     }
 
+    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+         return allowance[_owner][_spender];
+    }
+
 
     function allowAccount(address _target, bool allow) onlyOwner returns (bool success) {
 
@@ -194,7 +220,7 @@ contract FollowCoin is Ownable {
     }
 
     function mint(uint256 mintedAmount) onlyOwner {
-        balanceOf[msg.sender] = balanceOf[msg.sender].add(mintedAmount);
+        balances[msg.sender] = balanceOf(msg.sender).add(mintedAmount);
         totalSupply  = totalSupply.add(mintedAmount);
         Transfer(0, owner, mintedAmount);
     }
@@ -207,8 +233,8 @@ contract FollowCoin is Ownable {
      * @param _value the amount of money to burn
      */
     function burn(uint256 _value) onlyOwner returns (bool success) {
-        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
-        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);            // Subtract from the sender
+        require(balanceOf(msg.sender) >= _value);   // Check if the sender has enough
+        balances[msg.sender] = balanceOf(msg.sender).sub(_value);            // Subtract from the sender
         totalSupply = totalSupply.sub(_value);                      // Updates totalSupply
         Burn(msg.sender, _value);
         return true;
@@ -267,7 +293,7 @@ contract FollowCoinTokenSale is Haltable {
     uint public deadline;
     uint public tokensPerEther;
     FollowCoin public tokenReward;
-    mapping(address => uint256) public balanceOf;
+    mapping(address => uint256) public balances;
 
     event FundTransfer(address backer, uint amount, bool isContribution);
 
@@ -309,6 +335,9 @@ contract FollowCoinTokenSale is Haltable {
         beneficiary = tokenReward.owner();
     }
 
+    function balanceOf(address _owner) constant returns (uint256 balance) {
+        return balances[_owner];
+    }
 
     /**
      * Fallback function
@@ -323,13 +352,13 @@ contract FollowCoinTokenSale is Haltable {
         require(msg.value > 0);
        
         uint amount = msg.value;
-        require(balanceOf[msg.sender].add(amount) <= tokenLimitPerWallet);
+        require(balanceOf(msg.sender).add(amount) <= tokenLimitPerWallet);
 
         uint tokens =  calculateTokenAmount(amount.mul(tokensPerEther));
         require(totalTokens >= tokens);
         require(tokensSold.add(tokens) <= hardCap); // hardCap limit
         
-        balanceOf[msg.sender] = balanceOf[msg.sender].add(amount);
+        balances[msg.sender] = balances[msg.sender].add(amount);
         amountRaised = amountRaised.add(amount);
 
         tokensSold = tokensSold.add(tokens);
