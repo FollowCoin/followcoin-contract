@@ -79,13 +79,10 @@ contract FollowCoin is Ownable {
 
     // This creates an array with all balances
     mapping (address => uint256) public balanceOf;
-    mapping (address => bool) public frozenAccount;
     mapping (address => bool) public allowedAccount;
     mapping (address => mapping (address => uint256)) public allowance;
     mapping (address => bool) public isHolder;
     address [] public holders;
-
-    event FrozenFunds(address target, bool frozen);
 
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
@@ -135,7 +132,6 @@ contract FollowCoin is Ownable {
 
         require(balanceOf[_from] >= _value);                // Check if the sender has enough
         require(balanceOf[_to].add(_value) > balanceOf[_to]); // Check for overflows
-        require(!frozenAccount[_from]);                //Check if not frozen
         balanceOf[_from] = balanceOf[_from].sub(_value);                         // Subtract from the sender
         balanceOf[_to] = balanceOf[_to].add(_value);                           // Add the same to the recipient
 
@@ -195,11 +191,6 @@ contract FollowCoin is Ownable {
 
          allowedAccount[_target] = allow;
          return true;
-    }
-
-    function freezeAccount(address target, bool freeze) onlyOwner {
-        frozenAccount[target] = freeze;
-        FrozenFunds(target, freeze);
     }
 
     function mint(uint256 mintedAmount) onlyOwner {

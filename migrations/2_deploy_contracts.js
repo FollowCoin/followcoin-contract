@@ -2,11 +2,12 @@ var FollowCoin = artifacts.require("./FollowCoin.sol");
 var FollowCoinTokenSale = artifacts.require("./FollowCoinTokenSale.sol");
 
 module.exports = function(deployer) {
-  const initialSupply = web3.toWei(1000000000, "ether")
+  const wallet = web3.eth.accounts[0];
+  const initialSupply = 1000000000 * 10 ** 18;
   const tokenName = 'Follow Coin';
   const decimalUnits = 18;
   const tokenSymbol = 'FLLW';
-  deployer.deploy(FollowCoin, initialSupply, tokenName, decimalUnits, tokenSymbol).then(function() {
+  deployer.deploy(FollowCoin, wallet, initialSupply, tokenName, decimalUnits, tokenSymbol).then(function() {
     const hardCap = web3.toWei(330000000, "ether");
     const softCap = 0;
     const token = FollowCoin.address;
