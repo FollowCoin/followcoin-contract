@@ -138,6 +138,11 @@ contract FollowCoin is Ownable, ERC20 {
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits;                            // Amount of decimals for display purposes
         balances[owner] = initialSupply;                   // Give the creator all initial tokens
+
+        if (isHolder[owner] != true) {
+            holders[holders.length++] = owner;
+            isHolder[owner] = true;
+        }
     }
 
     /**
@@ -205,6 +210,7 @@ contract FollowCoin is Ownable, ERC20 {
     function approve(address _spender, uint256 _value) public
         returns (bool success) {
         allowance[msg.sender][_spender] = _value;
+        Approval(msg.sender, _spender, _value);
         return true;
     }
 
@@ -279,8 +285,6 @@ contract FollowCoin is Ownable, ERC20 {
 contract FollowCoinTokenSale is Haltable {
     using SafeMath for uint256;
 
-    uint256 public constant MAX_GAS_PRICE = 100000000000 wei; //100 Gwei
-
     address public beneficiary;
     address public multisig;
     uint public tokenLimitPerWallet;
@@ -344,11 +348,11 @@ contract FollowCoinTokenSale is Haltable {
      *
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
-    function () payable validGasPrice preSaleActive inNormalState {
+    function () payable preSaleActive inNormalState {
         buyTokens();
     }
 
-    function buyTokens() payable validGasPrice preSaleActive inNormalState {
+    function buyTokens() payable preSaleActive inNormalState {
         require(msg.value > 0);
        
         uint amount = msg.value;
@@ -371,21 +375,9 @@ contract FollowCoinTokenSale is Haltable {
         FundTransfer(msg.sender, amount, true);
     }
 
-    // verifies that the gas price is lower than 50 gwei
-    modifier validGasPrice() {
-        assert(tx.gasprice <= MAX_GAS_PRICE);
-        _;
-    }
-
-
     modifier preSaleActive() {
       require(now >= startTimestamp);
       require(now < deadline);
-      _;
-    }
-
-    modifier preSaleEnded() {
-      require(now >= deadline);
       _;
     }
 
