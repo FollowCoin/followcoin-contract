@@ -142,15 +142,6 @@ contract FollowCoin is Ownable, ERC20 {
         decimals = decimalUnits;                            // Amount of decimals for display purposes
         balances[owner] = totalSupply;                   // Give the creator all initial tokens
 
-        /*
-        owner = 0xe9A68BB8E83B16D6760D60A67F51A870a4215174;
-        totalSupply = 1000000000000000000000000000;                        // Update total supply
-        name = 'Follow Coin C';                                   // Set the name for display purposes
-        symbol = 'CLLW';                               // Set the symbol for display purposes
-        decimals = 18;                            // Amount of decimals for display purposes
-        balances[owner] = totalSupply;                   // Give the creator all initial tokens
-        */
-
         if (isHolder[owner] != true) {
             holders[holders.length++] = owner;
             isHolder[owner] = true;
@@ -340,21 +331,6 @@ contract FollowCoinTokenSale is Haltable {
         tokensPerEther = icoTokensPerEther;
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
         beneficiary = tokenReward.owner();
-        
-
-
-        /*
-        multisig = 0xe9A68BB8E83B16D6760D60A67F51A870a4215174;
-        owner = 0xe9A68BB8E83B16D6760D60A67F51A870a4215174;
-        hardCap = 330000000000000000000000000;
-        startTimestamp = 1508746657;
-        deadline = startTimestamp + 28 * 1 days;
-        totalTokens = 330000000000000000000000000;
-        tokenLimitPerWallet = 1000000000000000000000;
-        tokensPerEther = 7777;
-        tokenReward = FollowCoin(0xb8A4794A7072f328B3766666fd30C5bf3b60Eb3d);
-        beneficiary = tokenReward.owner();
-        */
     }
 
     function changeMultisigWallet(address _multisig) onlyOwner {
