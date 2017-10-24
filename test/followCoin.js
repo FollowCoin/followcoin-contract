@@ -34,7 +34,6 @@ contract('Follow Coin Token', function(accounts) {
   });
 
   it('should not allow to transferFrom from not approved (lockdown is on)', async function () {
-    await this.token.setLockDown(1);
     await this.token.transfer(accounts[2], 10 * 10 ** 18);  
     try {
       await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
@@ -45,7 +44,6 @@ contract('Follow Coin Token', function(accounts) {
   });
 
   it('should not allow to transferFrom from approved (lockdown is on)', async function () {
-    await this.token.setLockDown(1);
     await this.token.transfer(accounts[2], 10 * 10 ** 18);  
     try {
       await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
@@ -56,7 +54,7 @@ contract('Follow Coin Token', function(accounts) {
   });
 
   it('should not allow to transferFrom from not approved (lockdown is off)', async function () {
-    await this.token.setLockDown(0);
+    await this.token.disableLockDown();
     await this.token.transfer(accounts[2], 10 * 10 ** 18);  
     try {
       await this.token.transferFrom(accounts[2], accounts[1], 2 * 10 ** 18);
@@ -67,7 +65,7 @@ contract('Follow Coin Token', function(accounts) {
   });
 
   it('should allow to transferFrom from approved account (lockdown is off)', async function () {
-    await this.token.setLockDown(0);
+    await this.token.disableLockDown();
     await this.token.transfer(accounts[1], 10 * 10 ** 18);  
     const balance = await this.token.balanceOf(accounts[1]);
     await this.token.approve(accounts[2], 2 * 10 ** 18, {from: accounts[1]});

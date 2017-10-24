@@ -16,4 +16,5 @@ function toChecksumAddress (address) {
   return ret
 }
 
-console.log(toChecksumAddress('0xd603324951072bc23872da2b6c898337cebbf21c'));
+console.log(toChecksumAddress('0xe9a68bb8e83b16d6760d60a67f51a870a4215174'));
+console.log(toChecksumAddress('0x5c201bcc64f90efb1328d76940e740bf933633ad'));

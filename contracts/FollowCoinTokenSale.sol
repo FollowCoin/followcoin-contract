@@ -111,12 +111,12 @@ contract FollowCoin is Ownable, ERC20 {
 
     bool public contributorsLockdown = true;
 
-    function setLockDown(bool lock) onlyOwner {
-        contributorsLockdown = lock;
+    function disableLockDown() onlyOwner {
+      contributorsLockdown = false;
     }
 
     modifier coinsLocked() {
-      require(!contributorsLockdown || msg.sender == owner);
+      require(!contributorsLockdown || msg.sender == owner || allowedAccount[msg.sender]);
       _;
     }
 
@@ -126,18 +126,30 @@ contract FollowCoin is Ownable, ERC20 {
      * Initializes contract with initial supply tokens to the creator of the contract
      */
     function FollowCoin(
+        
         address multiSigWallet,
         uint256 initialSupply,
         string tokenName,
         uint8 decimalUnits,
         string tokenSymbol
+        
     ) {
+
         owner = multiSigWallet;
         totalSupply = initialSupply;                        // Update total supply
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
         decimals = decimalUnits;                            // Amount of decimals for display purposes
-        balances[owner] = initialSupply;                   // Give the creator all initial tokens
+        balances[owner] = totalSupply;                   // Give the creator all initial tokens
+
+        /*
+        owner = 0xe9A68BB8E83B16D6760D60A67F51A870a4215174;
+        totalSupply = 1000000000000000000000000000;                        // Update total supply
+        name = 'Follow Coin C';                                   // Set the name for display purposes
+        symbol = 'CLLW';                               // Set the symbol for display purposes
+        decimals = 18;                            // Amount of decimals for display purposes
+        balances[owner] = totalSupply;                   // Give the creator all initial tokens
+        */
 
         if (isHolder[owner] != true) {
             holders[holders.length++] = owner;
@@ -148,8 +160,7 @@ contract FollowCoin is Ownable, ERC20 {
     /**
      * Internal transfer, only can be called by this contract
      */
-    function _transfer(address _from, address _to, uint _value) internal {
-        require(!contributorsLockdown || _from == owner || allowedAccount[_from]);
+    function _transfer(address _from, address _to, uint _value) internal coinsLocked {
         require(_to != 0x0);                               // Prevent transfer to 0x0 address. Use burn() instead
 
         require(balanceOf(_from) >= _value);                // Check if the sender has enough
@@ -307,6 +318,7 @@ contract FollowCoinTokenSale is Haltable {
      * Setup the owner
      */
     function FollowCoinTokenSale(
+        
         address multiSigWallet,
         uint icoTokensLimitPerWallet,
         uint icoHardCap,
@@ -315,7 +327,9 @@ contract FollowCoinTokenSale is Haltable {
         uint icoTotalTokens,
         uint icoTokensPerEther,
         address addressOfTokenUsedAsReward 
+        
     ) {
+        
         multisig = multiSigWallet;
         owner = multiSigWallet;
         hardCap = icoHardCap;
@@ -326,6 +340,21 @@ contract FollowCoinTokenSale is Haltable {
         tokensPerEther = icoTokensPerEther;
         tokenReward = FollowCoin(addressOfTokenUsedAsReward);
         beneficiary = tokenReward.owner();
+        
+
+
+        /*
+        multisig = 0xe9A68BB8E83B16D6760D60A67F51A870a4215174;
+        owner = 0xe9A68BB8E83B16D6760D60A67F51A870a4215174;
+        hardCap = 330000000000000000000000000;
+        startTimestamp = 1508746657;
+        deadline = startTimestamp + 28 * 1 days;
+        totalTokens = 330000000000000000000000000;
+        tokenLimitPerWallet = 1000000000000000000000;
+        tokensPerEther = 7777;
+        tokenReward = FollowCoin(0xb8A4794A7072f328B3766666fd30C5bf3b60Eb3d);
+        beneficiary = tokenReward.owner();
+        */
     }
 
     function changeMultisigWallet(address _multisig) onlyOwner {
@@ -358,7 +387,7 @@ contract FollowCoinTokenSale is Haltable {
         uint amount = msg.value;
         require(balanceOf(msg.sender).add(amount) <= tokenLimitPerWallet);
 
-        uint tokens =  calculateTokenAmount(amount.mul(tokensPerEther));
+        uint tokens =  calculateTokenAmount(amount);
         require(totalTokens >= tokens);
         require(tokensSold.add(tokens) <= hardCap); // hardCap limit
         
@@ -395,67 +424,7 @@ contract FollowCoinTokenSale is Haltable {
       return tokenReward.balanceOf(_from);
     }
 
-    function getRate(uint tokens, uint bonus) constant returns(uint) {
-        return tokens.mul(bonus.add(100)).div(100);
-    }
-
-    function calculateTokenAmount(uint256 tokens) constant returns(uint256) {
-        uint soldTokens = tokensSold.mul(100).div(totalTokens);
-
-        uint _range10 = totalTokens.mul(10).div(100); //10%
-        uint _range20 = totalTokens.mul(20).div(100); //20%
-        uint _range70 = totalTokens.mul(70).div(100); //70%
-
-       
-        uint _tokens10 = 0;
-        uint _tokens20 = 0;
-        uint _tokens70 = 0;
-
-      
-        uint _total = tokens.add(tokensSold);
-
-        if(_range70 < _total) {
-            _tokens70 = _total.sub(_range70);
-
-            if(tokensSold > _range70)
-                _tokens70 = _total.sub(tokensSold.sub(_range70));
-
-            tokens = tokens.sub(_tokens70);
-        }
-
-        _total = tokens.add(tokensSold);
-        if(_range20 < _total && tokensSold < _range20) {
-            _tokens20 = _total.sub(_range20);
-
-            if(tokensSold > _range20)
-                _tokens20 = _total.sub(tokensSold.sub(_range20));
-
-
-            tokens = tokens.sub(_tokens20);
-        }
-
-        
-        _total = tokens.add(tokensSold);
-        if(_range10 < _total && tokensSold < _range10) {
-            _tokens10 = _total.sub(_range10);
-
-            if(tokensSold > _range10)
-                _tokens10 = _tokens10.sub(tokensSold.sub(_range10));
-
-        
-            tokens = tokens.sub(_tokens10);
-        }
-
-        uint rate = 0;
-        if(soldTokens < 10) rate = 30;
-        else if(soldTokens < 20) rate = 20;
-        else if(soldTokens < 70) rate = 10; 
-
-        tokens = getRate(tokens, rate);
-        tokens = tokens.add(getRate(_tokens10, 20));
-        tokens = tokens.add(getRate(_tokens20, 10));
-        tokens = tokens.add(_tokens70);
-        
-        return tokens;
+    function calculateTokenAmount(uint256 amount) constant returns(uint256) {
+        return amount.mul(tokensPerEther);
     }
 }

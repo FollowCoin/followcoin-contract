@@ -123,11 +123,11 @@ contract('Follow Coin ICO', function (accounts) {
     await this.crowdsale.sendTransaction({value: web3.toWei(1, "ether"), from: accounts[2]});
 
     const balance = await this.token.balanceOf(accounts[2]);
-    var pay = tokensPerEther * 1.3 * 10 ** 18;
+    var pay = tokensPerEther * 10 ** 18;
     assert.equal(balance.valueOf(), pay);
 
     const crowdsaleBalance = await this.crowdsale.totalTokens();
-    var paid = 330000000 - (tokensPerEther * 13 / 10);
+    var paid = 330000000 - tokensPerEther;
     assert.equal(crowdsaleBalance.valueOf(), (paid * 10) * 10 ** 17);
     
     const collected = await this.crowdsale.amountRaised();
@@ -143,7 +143,6 @@ contract('Follow Coin ICO', function (accounts) {
   it('should allow owner to send out FLLW when lockdown is set', async function () {
     const initialbalance = await this.token.balanceOf(accounts[0]);
     
-    await this.token.setLockDown(1, {from: accounts[0]});
     await this.token.transfer(accounts[2], 4 * 10 ** 18, {from: accounts[0]});
     
     const balance = await this.token.balanceOf(accounts[0]);
@@ -152,7 +151,17 @@ contract('Follow Coin ICO', function (accounts) {
   });
 
   it('should not allow purchaser to send out FLLW when lockdown is set', async function () {
-    await this.token.setLockDown(0, {from: accounts[0]});
+    
+    try {
+       await this.token.transfer(accounts[1], 1 * 10 ** 18, {from: accounts[2]});
+    } catch (error) {
+      return assertJump(error);
+    }
+    assert.fail('should have thrown before');
+  });
+
+  it('should allow purchaser to send out FLLW when lockdown is disabled', async function () {
+    await this.token.disableLockDown({from: accounts[0]});
     await this.token.transfer(accounts[2], 4 * 10 ** 18, {from: accounts[0]});
     
     const initialbalance = await this.token.balanceOf(accounts[2]);
@@ -163,16 +172,6 @@ contract('Follow Coin ICO', function (accounts) {
     const balance = await this.token.balanceOf(accounts[2]);
     var pay = 3 * 10 ** 18;
     assert.equal(balance.valueOf(), pay);
-
-
-    await this.token.setLockDown(1, {from: accounts[0]});
-   
-    try {
-       await this.token.transfer(accounts[1], 1 * 10 ** 18, {from: accounts[2]});
-    } catch (error) {
-      return assertJump(error);
-    }
-    assert.fail('should have thrown before');
   });
 
   it('should not allow purchase when pre sale is halted', async function () {
@@ -194,7 +193,7 @@ contract('Follow Coin ICO', function (accounts) {
     }
     assert.fail('should have thrown before');
   });
-
+  /*
   it('should be sold with +30% bonus if totalSold <=10%', async function () {
       await this.crowdsale.sendTransaction({value: web3.toWei(1, 'ether'), from: accounts[2]});
       var num = tokensPerEther * 1.3 * 10 ** 18;
@@ -267,7 +266,7 @@ contract('Follow Coin ICO', function (accounts) {
     }
     assert.fail('should have thrown before');
   });
-
+  */
 
   it('should not allow to exceed hard cap', async function () {
     await this.crowdsale.setSold(crowdsaleTotal * 10 ** 18);
