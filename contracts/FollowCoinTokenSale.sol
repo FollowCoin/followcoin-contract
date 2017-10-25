@@ -309,15 +309,14 @@ contract FollowCoinTokenSale is Haltable {
      * Setup the owner
      */
     function FollowCoinTokenSale(
-        
-        /*address multiSigWallet,
+        address multiSigWallet,
         uint icoTokensLimitPerWallet,
         uint icoHardCap,
         uint icoStartTimestamp,
         uint durationInDays,
         uint icoTotalTokens,
         uint icoTokensPerEther,
-        address addressOfTokenUsedAsReward */
+        address addressOfTokenUsedAsReward
         
     ) {
         multisig = multiSigWallet;
