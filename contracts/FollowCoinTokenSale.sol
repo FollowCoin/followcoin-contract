@@ -104,7 +104,7 @@ contract FollowCoin is Ownable, ERC20 {
     mapping (address => bool) public allowedAccount;
     mapping (address => mapping (address => uint256)) public allowance;
     mapping (address => bool) public isHolder;
-    address [] public holders;
+    address[] public holders;
 
     // This notifies clients about the amount burnt
     event Burn(address indexed from, uint256 value);
@@ -212,7 +212,6 @@ contract FollowCoin is Ownable, ERC20 {
          return allowance[_owner][_spender];
     }
 
-
     function allowAccount(address _target, bool allow) public onlyOwner returns (bool success) {
 
          allowedAccount[_target] = allow;
@@ -221,7 +220,7 @@ contract FollowCoin is Ownable, ERC20 {
 
     function mint(uint256 mintedAmount) public onlyOwner {
         balances[msg.sender] = balanceOf(msg.sender).add(mintedAmount);
-        totalSupply  = totalSupply.add(mintedAmount);
+        totalSupply = totalSupply.add(mintedAmount);
         Transfer(0, owner, mintedAmount);
     }
 
