@@ -1,29 +1,28 @@
-# FollowCoin PRE ICO
+# Follow Coin Contract
 
-## FLLW Pre Sale Details
+## FLLW Token Sale Details
 
-Pre-ICO date: 27th Oct 12:00 GMT 1509105600
+Token Sale start date: 27th Oct 16:00 UTC 1509120000
+Token Sale latest closing data: 24th Nov 16:00:00 UTC 1511539200
+Duration: 28 days (4 weeks)
 
-Duration: 4 weeks
 Min Cap: 0 ETH 
+Max Cap: 49,000 ETH
+Rate: 10000 FLLW per 1 ETH
 
-Max Cap: 330 000 000 ETH
+Total supply: 1 billion (1,000,000,000) 
+Sold during ICO: 49% (490,000,000)
+Retained by team: 33% (330,000,000)
+Platform maintenance: 18% (18,000,000)
 
-Amount of tokens: 330 000 000 FLLW (33% from total 1 000 000 000 supply)
+Max purchase per wallet during token sale: 1000 ETH
 
-Rate: 7777 FLLW per 1 ETH
+FLLW tokens purchased during the token sale will be sent directly to the purchasing wallet address. All tokens will be locked until 21 days after the closing of the Token Sale.
 
-Presale FLLW token discount: 
+The contracts were externally reviewed and tested by Yshurik and Bitcoinbrisbane. Reviews can be found here:
+https://gist.github.com/yshurik/521ec2bcbf5ca397367bcc297b85a921
+https://github.com/bitcoinbrisbane/followcoin-contract/blob/master/notes.md
 
-30% BONUS: 0 - 10% FLLW SOLD
-
-20% BONUS: 10% - 20% FLLW SOLD
-
-10% BONUS: 20% - 70% FLLW SOLD
-
-Max. investment on pre-ICO: 1000 ETH
-
-FLLW tokens sold during pre-ICO and ICO will be automatically sent to investors wallets from which funds are received.
 
 
 ## Local testing 
