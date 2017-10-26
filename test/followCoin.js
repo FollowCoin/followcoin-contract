@@ -1,5 +1,6 @@
 const FollowCoin = artifacts.require("FollowCoin");
-const assertJump = require("zeppelin-solidity/test/helpers/assertJump.js");
+//const assertJump = require("zeppelin-solidity/test/helpers/assertJump.js");
+const assertJump = require("./helpers/assertJump.js");
 
 const initialSupply = web3.toWei(1000000000, "ether")
 const tokenName = 'Follow Coin';

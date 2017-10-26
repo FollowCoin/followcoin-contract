@@ -184,7 +184,7 @@ contract FollowCoin is Ownable, ERC20 {
      */
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         require(_value <= allowance[_from][msg.sender]);     // Check allowance
-        allowance[_from][msg.sender] -= _value;
+        allowance[_from][msg.sender] = allowance[_from][msg.sender].sub(_value);
         _transfer(_from, _to, _value);
         return true;
     }
@@ -208,18 +208,18 @@ contract FollowCoin is Ownable, ERC20 {
         return true;
     }
 
-    function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) public constant returns (uint256 remaining) {
          return allowance[_owner][_spender];
     }
 
 
-    function allowAccount(address _target, bool allow) onlyOwner returns (bool success) {
+    function allowAccount(address _target, bool allow) public onlyOwner returns (bool success) {
 
          allowedAccount[_target] = allow;
          return true;
     }
 
-    function mint(uint256 mintedAmount) onlyOwner {
+    function mint(uint256 mintedAmount) public onlyOwner {
         balances[msg.sender] = balanceOf(msg.sender).add(mintedAmount);
         totalSupply  = totalSupply.add(mintedAmount);
         Transfer(0, owner, mintedAmount);
@@ -232,7 +232,7 @@ contract FollowCoin is Ownable, ERC20 {
      *
      * @param _value the amount of money to burn
      */
-    function burn(uint256 _value) onlyOwner returns (bool success) {
+    function burn(uint256 _value) public onlyOwner returns (bool success) {
         require(balanceOf(msg.sender) >= _value);   // Check if the sender has enough
         balances[msg.sender] = balanceOf(msg.sender).sub(_value);            // Subtract from the sender
         totalSupply = totalSupply.sub(_value);                      // Updates totalSupply
@@ -377,7 +377,6 @@ contract FollowCoinTokenSale is Haltable {
         _;
     }
 
-
     modifier preSaleActive() {
       require(now >= startTimestamp);
       require(now < deadline);
@@ -389,37 +388,34 @@ contract FollowCoinTokenSale is Haltable {
       _;
     }
 
-    function setSold(uint tokens) onlyOwner {
+    function setSold(uint tokens) public onlyOwner {
       tokensSold = tokensSold.add(tokens);
     }
 
-
-    function sendTokensBackToWallet() onlyOwner {
+    function sendTokensBackToWallet() public onlyOwner {
       totalTokens = 0;
       tokenReward.transfer(multisig, tokenReward.balanceOf(address(this)));
     }
 
-    function getTokenBalance(address _from) constant returns(uint) {
+    function getTokenBalance(address _from) public constant returns(uint) {
       return tokenReward.balanceOf(_from);
     }
 
-    function getRate(uint tokens, uint bonus) constant returns(uint) {
+    function getRate(uint tokens, uint bonus) public constant returns(uint) {
         return tokens.mul(bonus.add(100)).div(100);
     }
 
-    function calculateTokenAmount(uint256 tokens) constant returns(uint256) {
+    function calculateTokenAmount(uint256 tokens) public constant returns(uint256) {
         uint soldTokens = tokensSold.mul(100).div(totalTokens);
 
         uint _range10 = totalTokens.mul(10).div(100); //10%
         uint _range20 = totalTokens.mul(20).div(100); //20%
         uint _range70 = totalTokens.mul(70).div(100); //70%
-
        
         uint _tokens10 = 0;
         uint _tokens20 = 0;
         uint _tokens70 = 0;
 
-      
         uint _total = tokens.add(tokensSold);
 
         if(_range70 < _total) {

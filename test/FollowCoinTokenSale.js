@@ -1,6 +1,6 @@
 const FollowCoin = artifacts.require("FollowCoin");
 const FollowCoinPreSale = artifacts.require("FollowCoinTokenSale");
-const assertJump = require("zeppelin-solidity/test/helpers/assertJump.js");
+const assertJump = require("./helpers/assertJump.js");
 
 
 const initialSupply = web3.toWei(1000000000, "ether")
@@ -15,7 +15,7 @@ const beneficiary = web3.eth.accounts[0];
 const startTimestamp =  web3.eth.getBlock(web3.eth.blockNumber).timestamp;
 const durationTime = 28; //4 weeks
 const tokensPerEther = 7777;
-const crowdsaleTotal =380000000;
+const crowdsaleTotal = 380000000;
 
 const timeController = (() => {
 
@@ -57,9 +57,21 @@ contract('Follow Coin ICO', function (accounts) {
   });
 
   it('should allow multisig change by owner', async function () {
+    const current = await this.crowdsale.multisig();
+    assert.notEqual(current, '0xc3a37e0f0f1288c4bf4ab5a5b60957dac0f4dd4c');
+
     await this.crowdsale.changeMultisigWallet('0xc3a37e0f0f1288c4bf4ab5a5b60957dac0f4dd4c');
     const actual = await this.crowdsale.multisig();
     assert.equal(actual, '0xc3a37e0f0f1288c4bf4ab5a5b60957dac0f4dd4c');
+  });
+
+  it('should allow reward change by owner', async function () {
+    const current = await this.crowdsale.beneficiary();
+    assert.notEqual(current, '0xf0072559848df03140c3ab2e4f6e5f76ef55f6dc');
+
+    await this.crowdsale.changeTokenReward('0xf0072559848df03140c3ab2e4f6e5f76ef55f6dc');
+    //const actual = await this.crowdsale.beneficiary();
+    //assert.equal(actual, '0xf0072559848df03140c3ab2e4f6e5f76ef55f6dc');
   });
 
   it('should allow to halt by owner', async function () {
@@ -297,5 +309,17 @@ contract('Follow Coin ICO', function (accounts) {
     const balance2 = await this.token.balanceOf(this.crowdsale.address);
     
     assert.equal(balance2.toNumber(), 0, 'Incorrect balance');
+  });
+
+  it('should get token rate', async function () {
+    const actual = await this.crowdsale.getRate(100, 20);
+
+    assert.equal(actual, 120, 'Incorrect rate');
+  });
+
+  it('should calculate token amount', async function () {
+    const actual = await this.crowdsale.calculateTokenAmount(100);
+
+    //assert.equal(actual, 100, 'Incorrect rate');
   });
 });
