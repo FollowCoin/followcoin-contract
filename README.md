@@ -3,16 +3,23 @@
 ## FLLW Token Sale Details
 
 Token Sale start date: 27th Oct 16:00 UTC 1509120000
+
 Token Sale latest closing data: 24th Nov 16:00:00 UTC 1511539200
+
 Duration: 28 days (4 weeks)
 
 Min Cap: 0 ETH 
+
 Max Cap: 49,000 ETH
+
 Rate: 10000 FLLW per 1 ETH
 
 Total supply: 1 billion (1,000,000,000) 
+
 Sold during ICO: 49% (490,000,000)
+
 Retained by team: 33% (330,000,000)
+
 Platform maintenance: 18% (18,000,000)
 
 Max purchase per wallet during token sale: 1000 ETH
