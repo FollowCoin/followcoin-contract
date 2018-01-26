@@ -1,3 +1,39 @@
+# Follow Coin v2
+
+## Getting started
+
+Install the Truffle if havent yet, run:
+```sh
+# npm install -g truffle
+# npm install -g ethereumjs-testrpc
+```
+
+Install the OpenZeppelin library, run:
+```sh
+# npm install zeppelin-solidity
+# npm install chai
+# npm install chai-as-promised
+# npm install chai-bignumber
+```
+
+Compile
+```sh
+# truffle compile
+```
+
+Run tests
+```sh
+# truffle test
+```
+
+## Deploy
+
+To deploy manually can use truffle-flattener
+```sh
+# truffle-flattener contracts/FollowCoin.sol
+```
+
+
 # Follow Coin Contract
 
 ## FLLW Token Sale Details
