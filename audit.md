@@ -1,4 +1,4 @@
-## GithHub repository
+## Github repository
   1. Some directories contain outdated files, like: contracts\_1 and tests\_1
   2. vs\_code directory should not be stored in repository
   3. .gitignore should be populated with proper data (like temporary files, IDEs directories etc.)
@@ -22,7 +22,7 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
 - async/await
 - in most places arrow you can use arrow functions instead of function declaration
 
-  4. Write DRY code:
+ 4. Write DRY code:
 - There are a lot of places where code is duplicated (we found 10^18 to be used ~20 times)
 - functions ether and coin are identical
 - come up with better variable names, b1 and b2 does say nothing to developers
