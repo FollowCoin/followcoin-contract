@@ -53,3 +53,5 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
 2. Tests seem to be only negative (are testing when functions should fail) but they should also be positive (test when function should pass)
 
 3. Migration passed 5 arguments to contract while it expected for 0 arguments: should be fixed in this PR: [https://github.com/FollowCoin/followcoin-contract/pull/4](https://github.com/FollowCoin/followcoin-contract/pull/4)
+
+4. Smart Contract code often is not DRY (Do not Repeat Yourself rule), for example in <strong>transferFrom</strong> function which is overloaded couple of times, but instead of having common base for those functions, each overload copies the same code and changes just one line.
