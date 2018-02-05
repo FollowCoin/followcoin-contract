@@ -1,5 +1,5 @@
 # FollowCoin contracts audit report 5.02.2018
-
+  Purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development.
 ## Github repository
   1. Some directories contain outdated files, like: contracts\_1 and tests\_1
   2. vs\_code directory should not be stored in repository
