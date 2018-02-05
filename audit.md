@@ -1,3 +1,5 @@
+# FollowCoin contracts audit report 5.02.2018
+
 ## Github repository
   1. Some directories contain outdated files, like: contracts\_1 and tests\_1
   2. vs\_code directory should not be stored in repository
