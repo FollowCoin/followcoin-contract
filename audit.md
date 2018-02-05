@@ -44,7 +44,7 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
 - allows you to specify the versions of a package that your project can use using semantic versioning rules.
 - makes your build reproducible, and therefore _much_ easier to share with other developers.
 
-##Suggestions about contracts code:
+## Suggestions about contracts code:
 
 1. Logic is very hardly visible in code. Only single contract inheritance is used which causes that main contract FollowCoin.sol has only 1 public function that doesn&#39;t tell much about logic. My suggestion is to use multiple inheritance where possible to avoid 6 elements long inheritance chain.
 
