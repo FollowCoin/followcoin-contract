@@ -55,3 +55,60 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
 3. Migration passed 5 arguments to contract while it expected for 0 arguments: should be fixed in this PR: [https://github.com/FollowCoin/followcoin-contract/pull/4](https://github.com/FollowCoin/followcoin-contract/pull/4)
 
 4. Smart Contract code often is not DRY (Do not Repeat Yourself rule), for example in <strong>transferFrom</strong> function which is overloaded couple of times, but instead of having common base for those functions, each overload copies the same code and changes just one line.
+
+## Questions for feature verification
+
+##### Can you transfer the FLLWB from person A to person B?
+Yes
+
+##### Can person A transfer FLLWB from their MEW to person B?
+Yes
+##### Can person B the received FLLWB back again to person A?
+Yes
+##### Can the FLLWB coin be sent to Exchanges from MEW?
+Yes
+##### Can the FLLWB be bought on Exchanges?
+No
+##### Can the FLLWB be transferred from their Exchange wallet to their MEW?
+FFLWB can work with MEW for example with MetaMask as it seems to be compatible with ERC20/ERC223
+##### Is it possible to LOCK an certain amount of FLLWB for a specified amount of time?
+no
+##### Is it possible to UNLOCK an certain amount of FLLWB?
+no
+##### Is it possible to BURN a certain amount of FLLWB?
+no
+##### Is it possible to have another (third-party) smart contract work with FLLWB?
+yes
+##### Is it possible to create a Bounty-programme based on our current contract (or third-party) integration
+yes
+##### Is it possible to add Follow Coin Smart contract as a comment in the Smart Contract code?
+clarify?
+##### Is the Smart Contract optimised for Exchanges?
+no
+##### Is the Smart Contract verified by a debugger (like no errors in return based on return:true values?
+no
+##### Does this FLLWB contract work with Ether Delta?
+We see no public data about what are requirements for ICO to work with them. We suppose being compatible with ERC20/ERC223 would be enough.
+##### Does this FLLWB contract work with OKEX?
+
+##### Does the contract include a Airdrop functionality (in case of another mistake/bug/error, and that we need FLLWC)
+no
+##### Is the FLLWB fully trade-able -> SELL/BUY/DEPOSIT/WITHDRAWL?
+Depends what do you mean. You can send your ICO tokens to everyone you want to, or exchange for ETH and as such it’s full tradeable.
+##### In the process of ‘fixing’ the old contract (FLLWA), you’ve had a look into FLLWA proxy contracts. Would it be wise to make sure that our new contract (FLLWB) works with these proxy contracts?
+
+##### Can we, with the current contract ‘retrieve’ FLLWA from the users, and can we then automatically send out FLLWB to the users? 
+No, we need the user to manually send FLLWA to our wallet to get FLLWB returned automatically
+##### Same question as above, but then in combination with the Ether Delta exchange?
+No, we use the migration webtool for this
+##### What happens when I have not exchanged my FLLWA to FLLWB and try to sent FLLWA to a future new exchange?
+If the new exchange is going to support only FLLWB than it will not recognize FLLWA
+
+
+
+
+
+
+
+
+
