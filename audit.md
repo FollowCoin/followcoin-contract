@@ -136,3 +136,25 @@ If the new exchange is going to support only FLLWB than it will not recognize FL
 | contracts/Migrations.sol     |      0%      |      0%     |    0%   |
 | contracts/MigratoryToken.sol |     100%     |     100%    |   100%  |
 | All files                    |    46,67%    |    51,75%   |  46,24% |
+
+## Test Suite Results
+
+    Contract: FollowCoin
+        ✓ should have set token name
+        ✓ should have set token symbol
+        ✓ should not accept ether
+    
+        check the transfers
+          ✓ should have transfer ok (109ms)
+          ✓ should have transferFrom ok with allowance (135ms)
+          ✓ should have transferMulti ok (173ms)
+          ✓ should have transferMulti partial ok (113ms)
+     
+        check the erc223
+          ✓ should have token transfer to contract ok by default (95ms)
+          ✓ should have token transfer to contract fail after erc223 activated (108ms)
+          ✓ should have token transfer to erc223 receiver contract ok after erc223 activated (89ms)
+          ✓ should have token transfer to contract ok after erc223 activated and whitelisted (116ms)
+          ✓ should have token transfer to contract ok after erc223 activated and user whitelisted (195ms)
+        check migration to FLLWc
+          ✓ should have balances migrated to FLLwc (391ms)
