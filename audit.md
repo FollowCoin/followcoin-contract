@@ -1,6 +1,8 @@
-# FollowCoin contracts audit report 5.02.2018
+# FollowCoin contracts audit report 01-05.02.2018
   Purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development.
+  
 ## Github repository
+
   1. Some directories contain outdated files, like: contracts\_1 and tests\_1
   2. vs\_code directory should not be stored in repository
   3. .gitignore should be populated with proper data (like temporary files, IDEs directories etc.)
@@ -9,42 +11,40 @@
   6. You should remove code that is not used and is not planned to be used
 
 ## JS
+
   1. Setup JavaScript/Solidity linters, such as eslint, advantages:
     1. keeping your code style consistent
     2. Spotting potential errors and bad patterns (duplicate variables, unreachable code or invalid regular expressions)
     3. Saving time (you might uncover a bug or two on early stages, before they even reach runtime)
 on a side note: use prettier, it is a tool that will help you with formatting your code. You can run prettier from command line or use it at pre commit hook
-  
-  2. Add truffle as dependency and write scripts for it, so the developers won&#39;t need to install it globally
-  
-  3. Use ES Next features such as
-- let and const instead of var for variable declarations
-- function default parameters
-- template literals
-- async/await
-- in most places arrow you can use arrow functions instead of function declaration
-
+    2. Add truffle as dependency and write scripts for it, so the developers won&#39;t need to install it globally
+    3. Use ES Next features such as
+    - let and const instead of var for variable declarations
+    - function default parameters
+    - template literals
+    - async/await
+    - in most places arrow you can use arrow functions instead of function declaration
  4. Write DRY code:
-- There are a lot of places where code is duplicated (we found 10^18 to be used ~20 times)
-- functions ether and coin are identical
-- come up with better variable names, b1 and b2 does say nothing to developers
+    - There are a lot of places where code is duplicated (we found 10^18 to be used ~20 times)
+    - functions ether and coin are identical
+    - come up with better variable names, b1 and b2 does say nothing to developers
 
 
   5. Script tags should be placed in head instead at the bottom of the body (add defer attribute to the tag)
 
   6. Missing properties in package.json: name and version.  A **package.json** must have:
-
-- **&quot;name&quot;**
-  - all lowercase
-  - one word, no spaces
-  - dashes and underscores allowed
-- **&quot;version&quot;**
-  - in the form of **x.x.x**
-  - follows semver spec. It's also good to have such fields as: author, license, contributors, description  and scripts. A **package.json** file:
-
-- lists the packages that your project depends on.
-- allows you to specify the versions of a package that your project can use using semantic versioning rules.
-- makes your build reproducible, and therefore _much_ easier to share with other developers.
+    - **&quot;name&quot;**
+        - all lowercase
+        - one word, no spaces
+        - dashes and underscores allowed
+    - **&quot;version&quot;**
+        - in the form of **x.x.x**
+        - follows semver spec. It's also good to have such fields as: author, license, contributors, description  and scripts.
+        
+    - A **package.json** file:
+        - lists the packages that your project depends on.
+        - allows you to specify the versions of a package that your project can use using semantic versioning rules.
+        - makes your build reproducible, and therefore _much_ easier to share with other developers.
 
 ## Suggestions about contracts code:
 
@@ -58,57 +58,81 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
 
 ## Questions for feature verification
 
-##### Can you transfer the FLLWB from person A to person B?
+#### Can you transfer the FLLWB from person A to person B?
 Yes
 
-##### Can person A transfer FLLWB from their MEW to person B?
+#### Can person A transfer FLLWB from their MEW to person B?
 Yes
-##### Can person B the received FLLWB back again to person A?
+
+#### Can person B the received FLLWB back again to person A?
 Yes
-##### Can the FLLWB coin be sent to Exchanges from MEW?
+
+#### Can the FLLWB coin be sent to Exchanges from MEW?
 Yes
-##### Can the FLLWB be bought on Exchanges?
+
+#### Can the FLLWB be bought on Exchanges?
 No
-##### Can the FLLWB be transferred from their Exchange wallet to their MEW?
+
+#### Can the FLLWB be transferred from their Exchange wallet to their MEW?
 FFLWB can work with MEW for example with MetaMask as it seems to be compatible with ERC20/ERC223
-##### Is it possible to LOCK an certain amount of FLLWB for a specified amount of time?
-no
-##### Is it possible to UNLOCK an certain amount of FLLWB?
-no
-##### Is it possible to BURN a certain amount of FLLWB?
-no
-##### Is it possible to have another (third-party) smart contract work with FLLWB?
-yes
-##### Is it possible to create a Bounty-programme based on our current contract (or third-party) integration
-yes
-##### Is it possible to add Follow Coin Smart contract as a comment in the Smart Contract code?
-clarify?
-##### Is the Smart Contract optimised for Exchanges?
-no
-##### Is the Smart Contract verified by a debugger (like no errors in return based on return:true values?
-no
-##### Does this FLLWB contract work with Ether Delta?
+
+#### Is it possible to LOCK an certain amount of FLLWB for a specified amount of time?
+No
+
+#### Is it possible to UNLOCK an certain amount of FLLWB?
+No
+
+#### Is it possible to BURN a certain amount of FLLWB?
+No
+
+#### Is it possible to have another (third-party) smart contract work with FLLWB?
+Yes
+
+#### Is it possible to create a Bounty-programme based on our current contract (or third-party) integration
+Yes
+
+#### Is it possible to add Follow Coin Smart contract as a comment in the Smart Contract code?
+Clarify?
+
+#### Is the Smart Contract optimised for Exchanges?
+No
+
+#### Is the Smart Contract verified by a debugger (like no errors in return based on return:true values?
+No
+
+#### Does this FLLWB contract work with Ether Delta?
 We see no public data about what are requirements for ICO to work with them. We suppose being compatible with ERC20/ERC223 would be enough.
-##### Does this FLLWB contract work with OKEX?
 
-##### Does the contract include a Airdrop functionality (in case of another mistake/bug/error, and that we need FLLWC)
-no
-##### Is the FLLWB fully trade-able -> SELL/BUY/DEPOSIT/WITHDRAWL?
+#### Does this FLLWB contract work with OKEX?
+
+#### Does the contract include a Airdrop functionality (in case of another mistake/bug/error, and that we need FLLWC)
+No
+
+#### Is the FLLWB fully trade-able -> SELL/BUY/DEPOSIT/WITHDRAWL?
 Depends what do you mean. You can send your ICO tokens to everyone you want to, or exchange for ETH and as such it’s full tradeable.
-##### In the process of ‘fixing’ the old contract (FLLWA), you’ve had a look into FLLWA proxy contracts. Would it be wise to make sure that our new contract (FLLWB) works with these proxy contracts?
 
-##### Can we, with the current contract ‘retrieve’ FLLWA from the users, and can we then automatically send out FLLWB to the users? 
+#### In the process of ‘fixing’ the old contract (FLLWA), you’ve had a look into FLLWA proxy contracts. Would it be wise to make sure that our new contract (FLLWB) works with these proxy contracts?
+
+#### Can we, with the current contract ‘retrieve’ FLLWA from the users, and can we then automatically send out FLLWB to the users? 
 No, we need the user to manually send FLLWA to our wallet to get FLLWB returned automatically
-##### Same question as above, but then in combination with the Ether Delta exchange?
+
+#### Same question as above, but then in combination with the Ether Delta exchange?
 No, we use the migration webtool for this
-##### What happens when I have not exchanged my FLLWA to FLLWB and try to sent FLLWA to a future new exchange?
+
+#### What happens when I have not exchanged my FLLWA to FLLWB and try to sent FLLWA to a future new exchange?
 If the new exchange is going to support only FLLWB than it will not recognize FLLWA
 
+## Individual test file coverage report
 
-
-
-
-
-
-
-
+| File                         | % Statements | % Functions | % Lines |
+|------------------------------|--------------|-------------|---------|
+| contracts/BurnableToken.sol  |      0%      |      0%     |    0%   |
+| contracts/ERC223.sol         |     100%     |     100%    |   100%  |
+| contracts/ERC223Receiver.sol |      0%      |      0%     |    0%   |
+| contracts/ERC223Token.sol    |    68.41%    |    85.71%   |  54.20% |
+| contracts/FollowCoin.sol     |     100%     |     100%    |   100%  |
+| contracts/HoldersToken.sol   |    51,61%    |     80%     |   62%   |
+| contracts/MigrationAgent.sol |      0%      |      0%     |    0%   |
+| contracts/Migrations.sol     |      0%      |      0%     |    0%   |
+| contracts/MigratoryToken.sol |     100%     |     100%    |   100%  |
+| All files                    |    46,67%    |    51,75%   |  46,24% |
