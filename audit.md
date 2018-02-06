@@ -1,7 +1,15 @@
 # FollowCoin contracts audit report 01-05.02.2018
   Purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development.
   
-## Github repository
+## Table of contents
+* [Github Repository](#github-repository)
+* [JavaScript Review](#javascript-review)
+* [Suggestions about contracts code](#suggestions-about-contracts-code)
+* [Questions for feature verification](#questions-for-feature-verification)
+* [Individual test file coverage report](#individual-test-file-coverage-report)
+* [Test Suite Results](#test-suite-results)
+  
+## Github Repository
 
   1. Some directories contain outdated files, like: contracts\_1 and tests\_1
   2. vs\_code directory should not be stored in repository
@@ -10,7 +18,7 @@
   5. File naming is not consistent i.e.: test/FollowCoin.js should be named test/testFollowCoin.js or test/FollowCoin.spec.js
   6. You should remove code that is not used and is not planned to be used
 
-## JS
+## JavaScript review
 
   1. Setup JavaScript/Solidity linters, such as eslint, advantages:
     1. keeping your code style consistent
