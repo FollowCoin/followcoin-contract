@@ -20,13 +20,13 @@
 
 ## JavaScript review
 
-  1. Setup JavaScript/Solidity linters, such as eslint, advantages:
-    1. keeping your code style consistent
-    2. Spotting potential errors and bad patterns (duplicate variables, unreachable code or invalid regular expressions)
-    3. Saving time (you might uncover a bug or two on early stages, before they even reach runtime)
-on a side note: use prettier, it is a tool that will help you with formatting your code. You can run prettier from command line or use it at pre commit hook
-    2. Add truffle as dependency and write scripts for it, so the developers won&#39;t need to install it globally
-    3. Use ES Next features such as
+ 1. Setup JavaScript/Solidity linters, such as eslint, advantages:
+      1. Keeping your code style consistent
+      2. Spotting potential errors and bad patterns (duplicate variables, unreachable code or invalid regular expressions)
+      3. Saving time (you might uncover a bug or two on early stages, before they even reach runtime)
+  on a side note: use prettier, it is a tool that will help you with formatting your code. You can run prettier from command line or use it at pre commit hook
+ 2. Add truffle as dependency and write scripts for it, so the developers won&#39;t need to install it globally
+ 3. Use ES Next features such as
     - let and const instead of var for variable declarations
     - function default parameters
     - template literals
