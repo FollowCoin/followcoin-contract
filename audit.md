@@ -47,7 +47,8 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
         - dashes and underscores allowed
     - **&quot;version&quot;**
         - in the form of **x.x.x**
-        - follows semver spec. It's also good to have such fields as: author, license, contributors, description  and scripts.
+        - follows semver spec.
+        - It's also good to have such fields as: author, license, contributors, description  and scripts.
         
     - A **package.json** file:
         - lists the packages that your project depends on.
@@ -67,68 +68,70 @@ on a side note: use prettier, it is a tool that will help you with formatting yo
 ## Questions for feature verification
 
 #### Can you transfer the FLLWB from person A to person B?
-Yes
+    Yes, this is part of ERC223 interface.
 
 #### Can person A transfer FLLWB from their MEW to person B?
-Yes
+    Yes, as above.
 
 #### Can person B the received FLLWB back again to person A?
-Yes
+    Yes, as above.
 
 #### Can the FLLWB coin be sent to Exchanges from MEW?
-Yes
+    Yes, MEW can be integrated with MetaMask which supports sending ICO tokens.
 
 #### Can the FLLWB be bought on Exchanges?
-No
+    Currently not, it can be sold in exchanges that work on ERC223 standard.
 
 #### Can the FLLWB be transferred from their Exchange wallet to their MEW?
-FFLWB can work with MEW for example with MetaMask as it seems to be compatible with ERC20/ERC223
+    FFLWB can work with MEW for example with MetaMask as it seems to be compatible with ERC20/ERC223.
 
 #### Is it possible to LOCK an certain amount of FLLWB for a specified amount of time?
-No
+    There's not such a functionality.
 
 #### Is it possible to UNLOCK an certain amount of FLLWB?
-No
+    There's not such a functionality.
 
 #### Is it possible to BURN a certain amount of FLLWB?
-No
+    Only owner of contract can burn his FLLWB.
 
 #### Is it possible to have another (third-party) smart contract work with FLLWB?
-Yes
+    Yes, it will have be coded but it's possible.
 
 #### Is it possible to create a Bounty-programme based on our current contract (or third-party) integration
-Yes
+    Bounty-programme could help to improve FollowCoin security, and based on it's requirements, FollowCoint fulfills all of them.
 
 #### Is it possible to add Follow Coin Smart contract as a comment in the Smart Contract code?
-Clarify?
+    Yes, it is possible to add Follow Coint Smart Conntract as a comment, because you can add a comment to every Smart Contract Code.
 
 #### Is the Smart Contract optimised for Exchanges?
-No
+    We haven't found any optimisation solely for exchanges.
 
 #### Is the Smart Contract verified by a debugger (like no errors in return based on return:true values?
-No
+    It haven't been verified.
 
 #### Does this FLLWB contract work with Ether Delta?
-We see no public data about what are requirements for ICO to work with them. We suppose being compatible with ERC20/ERC223 would be enough.
+    We see no public data about what are requirements for ICO to work with them. We suppose being compatible with ERC223 would be enough.
 
 #### Does this FLLWB contract work with OKEX?
+    No, OKEX doesn't seem to be compatible with ERC223 tokens.
 
 #### Does the contract include a Airdrop functionality (in case of another mistake/bug/error, and that we need FLLWC)
-No
+    No functionality like that have been found.
 
 #### Is the FLLWB fully trade-able -> SELL/BUY/DEPOSIT/WITHDRAWL?
-Depends what do you mean. You can send your ICO tokens to everyone you want to, or exchange for ETH and as such it’s full tradeable.
+    Depends what do you mean. You can send your ICO tokens to everyone you want to, or exchange for ETH and as such it’s full tradeable.
 
 #### In the process of ‘fixing’ the old contract (FLLWA), you’ve had a look into FLLWA proxy contracts. Would it be wise to make sure that our new contract (FLLWB) works with these proxy contracts?
+    Generally speaking, it would be a good idea to entirely remove old contract - FLLWA. Yes it would be wise to check it.
 
 #### Can we, with the current contract ‘retrieve’ FLLWA from the users, and can we then automatically send out FLLWB to the users? 
-No, we need the user to manually send FLLWA to our wallet to get FLLWB returned automatically
+    No, we need the user to manually send FLLWA to our wallet to get FLLWB returned automatically.
 
 #### Same question as above, but then in combination with the Ether Delta exchange?
-No, we use the migration webtool for this
+    No, we use the migration webtool for this.
 
 #### What happens when I have not exchanged my FLLWA to FLLWB and try to sent FLLWA to a future new exchange?
-If the new exchange is going to support only FLLWB than it will not recognize FLLWA
+    If the new exchange is going to support only FLLWB than it will not recognize FLLWA.
 
 ## Individual test file coverage report
 
@@ -147,22 +150,28 @@ If the new exchange is going to support only FLLWB than it will not recognize FL
 
 ## Test Suite Results
 
-    Contract: FollowCoin
-        ✓ should have set token name
-        ✓ should have set token symbol
-        ✓ should not accept ether
-    
-        check the transfers
-          ✓ should have transfer ok (109ms)
-          ✓ should have transferFrom ok with allowance (135ms)
-          ✓ should have transferMulti ok (173ms)
-          ✓ should have transferMulti partial ok (113ms)
-     
-        check the erc223
-          ✓ should have token transfer to contract ok by default (95ms)
-          ✓ should have token transfer to contract fail after erc223 activated (108ms)
-          ✓ should have token transfer to erc223 receiver contract ok after erc223 activated (89ms)
-          ✓ should have token transfer to contract ok after erc223 activated and whitelisted (116ms)
-          ✓ should have token transfer to contract ok after erc223 activated and user whitelisted (195ms)
-        check migration to FLLWc
-          ✓ should have balances migrated to FLLwc (391ms)
+  Contract: FollowCoin
+      ✓ should have set token name
+      ✓ should have set token symbol
+      ✓ should not accept ether
+
+      check the transfers
+        ✓ should have transfer ok (109ms)
+        ✓ should have transferFrom ok with allowance (135ms)
+        ✓ should have transferMulti ok (173ms)
+        ✓ should have transferMulti partial ok (113ms)
+
+      check the erc223
+        ✓ should have token transfer to contract ok by default (95ms)
+        ✓ should have token transfer to contract fail after erc223 activated (108ms)
+        ✓ should have token transfer to erc223 receiver contract ok after erc223 activated (89ms)
+        ✓ should have token transfer to contract ok after erc223 activated and whitelisted (116ms)
+        ✓ should have token transfer to contract ok after erc223 activated and user whitelisted (195ms)
+      check migration to FLLWc
+        ✓ should have balances migrated to FLLwc (391ms)
+        
+## Authors
+  - Jerzy Spendel [https://github.com/jerzyspendel](https://github.com/jerzyspendel)
+  - Chris Parjaszewski [https://github.com/krzysztofp](https://github.com/krzysztofp)
+  - Łukasz Sojka [https://github.com/sojek](https://github.com/sojek)
+  - Tomasz Ferens [https://github.com/tomaszferens](https://github.com/tomaszferens)
