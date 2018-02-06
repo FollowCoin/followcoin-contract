@@ -41,19 +41,19 @@
   5. Script tags should be placed in head instead at the bottom of the body (add defer attribute to the tag)
 
   6. Missing properties in package.json: name and version.  A **package.json** must have:
-    - **&quot;name&quot;**
-        - all lowercase
-        - one word, no spaces
-        - dashes and underscores allowed
-    - **&quot;version&quot;**
-        - in the form of **x.x.x**
-        - follows semver spec.
-        - It's also good to have such fields as: author, license, contributors, description  and scripts.
-        
-    - A **package.json** file:
-        - lists the packages that your project depends on.
-        - allows you to specify the versions of a package that your project can use using semantic versioning rules.
-        - makes your build reproducible, and therefore _much_ easier to share with other developers.
+      - **&quot;name&quot;**
+          - all lowercase
+          - one word, no spaces
+          - dashes and underscores allowed
+      - **&quot;version&quot;**
+          - in the form of **x.x.x**
+          - follows semver spec.
+          - It's also good to have such fields as: author, license, contributors, description  and scripts.
+
+      - A **package.json** file:
+          - lists the packages that your project depends on.
+          - allows you to specify the versions of a package that your project can use using semantic versioning rules.
+          - makes your build reproducible, and therefore _much_ easier to share with other developers.
 
 ## Suggestions about contracts code:
 
