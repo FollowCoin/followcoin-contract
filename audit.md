@@ -65,6 +65,8 @@
 
 4. Smart Contract code often is not DRY (Do not Repeat Yourself rule), for example in <strong>transferFrom</strong> function which is overloaded couple of times, but instead of having common base for those functions, each overload copies the same code and changes just one line.
 
+5. You should use uint256 were possible as it's gas cost is lower
+
 ## Questions for feature verification
 
 #### Can you transfer the FLLWB from person A to person B?
