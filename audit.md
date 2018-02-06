@@ -1,5 +1,5 @@
 # FollowCoin contracts audit report 01-05.02.2018
-  Purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development.
+  The purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development. We propose following changes and improvements that would drastically increase further progress.
   
 ## Table of contents
 * [Github Repository](#github-repository)
