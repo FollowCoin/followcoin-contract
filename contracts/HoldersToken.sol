@@ -17,7 +17,7 @@ contract HoldersToken is BurnableToken {
 	mapping (address => bool) public isHolder;
 	address [] public holders;
 
-	function checkHolder(address _addr) internal returns (bool) {
+	function addHolder(address _addr) internal returns (bool) {
 		if (isHolder[_addr] != true) {
 			holders[holders.length++] = _addr;
 			isHolder[_addr] = true;
@@ -29,28 +29,28 @@ contract HoldersToken is BurnableToken {
 	function transfer(address _to, uint256 _value) public returns (bool) {
 		require(_to != address(this)); // Prevent transfer to contract itself
 		bool ok = super.transfer(_to, _value);
-		checkHolder(_to);
+		addHolder(_to);
 		return ok;
 	}
 
 	function transfer(address _to, uint256 _value, bytes _data) public returns (bool) {
 		require(_to != address(this)); // Prevent transfer to contract itself
 		bool ok = super.transfer(_to, _value, _data);
-		checkHolder(_to);
+		addHolder(_to);
 		return ok;
 	}
 
 	function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
 		require(_to != address(this)); // Prevent transfer to contract itself
 		bool ok = super.transferFrom(_from, _to, _value);
-		checkHolder(_to);
+		addHolder(_to);
 		return ok;
 	}
 
 	function transferFrom(address _from, address _to, uint256 _value, bytes _data) public returns (bool) {
 		require(_to != address(this)); // Prevent transfer to contract itself
 		bool ok = super.transferFrom(_from, _to, _value, _data);
-		checkHolder(_to);
+		addHolder(_to);
 		return ok;
 	}
 

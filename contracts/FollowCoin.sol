@@ -20,17 +20,34 @@ contract FollowCoin is MigratoryToken {
 		name = "FollowCoin";
 		symbol = "FLLW";
 		decimals = 18;
-		totalSupply_ = 1000000000*1e18;
+		totalSupply_ = 515547536*1e18;
 		balances[owner] = totalSupply_;
 		holders[holders.length++] = owner;
 		isHolder[owner] = true;
+	}
+
+	//! Address of migration gate to do transferMulti on migration
+	address public migrationGate;
+
+	/*!	Setup the address for new contract (to migrate coins to)
+		Can be called only by owner (onlyOwner)
+	 */
+	function setMigrationGate(address _addr) public onlyOwner {
+		migrationGate = _addr;
+	}
+
+	/*!	Throws if called by any account other than the migrationGate.
+	 */
+	modifier onlyMigrationGate() {
+		require(msg.sender == migrationGate);
+		_;
 	}
 
 	/*!	Transfer tokens to multipe destination addresses
 		Returns list with appropriate (by index) successful statuses.
 		(string with 0 or 1 chars)
 	 */
-	function transferMulti(address [] _tos, uint256 [] _values) public returns (string) {
+	function transferMulti(address [] _tos, uint256 [] _values) public onlyMigrationGate returns (string) {
 		require(_tos.length == _values.length);
 		bytes memory return_values = new bytes(_tos.length);
 

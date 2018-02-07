@@ -14,6 +14,7 @@ var FLLWcCoin = artifacts.require("./contracts/FLLWc.sol");
 
 const tokenName = 'FollowCoin';
 const tokenSymbol = 'FLLW';
+const total = 515547536;
 
 function ether(n) {
 	return new web3.BigNumber(web3.toWei(n, 'ether'))
@@ -52,7 +53,7 @@ contract('FollowCoin', function(accounts) {
 			const b0 = await this.token.balanceOf(accounts[0]);
 			const b1 = await this.token.balanceOf(accounts[1]);
 			assert.equal(ok1, true, "returns not true");
-			assert.equal(b0.valueOf(), coin(1e9).valueOf(), "balance is wrong");
+			assert.equal(b0.valueOf(), coin(total).valueOf(), "balance is wrong");
 			assert.equal(b1.valueOf(), coin(0).valueOf(), "balance is wrong");
 		});
 
@@ -67,6 +68,7 @@ contract('FollowCoin', function(accounts) {
 		});
 
 		it("should have transferMulti ok", async function() {
+			await this.token.setMigrationGate(accounts[0]);
 			await this.token.transferMulti([accounts[1],accounts[2]], [coin(100),coin(200)]);
 			const ret1 = await this.token.transferMulti.call([accounts[1],accounts[2]], [coin(100),coin(200)]);
 			const b1 = await this.token.balanceOf(accounts[1]);
@@ -77,11 +79,13 @@ contract('FollowCoin', function(accounts) {
 			await this.token.transfer(accounts[0], coin(100), {from: accounts[1]});
 			await this.token.transfer(accounts[0], coin(200), {from: accounts[2]});
 			const b0 = await this.token.balanceOf(accounts[0]);
-			assert.equal(b0.valueOf(), coin(1e9).valueOf(), "balance is wrong");
+			assert.equal(b0.valueOf(), coin(total).valueOf(), "balance is wrong");
 		});
 
 		it("should have transferMulti partial ok", async function() {
+			await this.token.setMigrationGate(accounts[0]);
 			await this.token.transferMulti([accounts[1],accounts[2]], [coin(100),coin(200)]);
+			await this.token.setMigrationGate(accounts[2]);
 			const ret1 = await this.token.transferMulti.call([accounts[0],accounts[1]], [coin(100),coin(200)], {from: accounts[2]});
 			await this.token.transferMulti([accounts[0],accounts[1]], [coin(100),coin(200)], {from: accounts[2]});
 			const b1 = await this.token.balanceOf(accounts[1]);
@@ -113,7 +117,7 @@ contract('FollowCoin', function(accounts) {
 			await this.token.transfer(accounts[1], coin(100)); // still ok
 			await this.token.transfer(accounts[0], coin(100), {from: accounts[1]});
 			const b0 = await this.token.balanceOf(accounts[0]);
-			assert.equal(b0.valueOf(), coin(1e9).valueOf(), "balance is wrong");
+			assert.equal(b0.valueOf(), coin(total).valueOf(), "balance is wrong");
 		});
 
 		it("should have token transfer to erc223 receiver contract ok after erc223 activated", async function() {
@@ -179,7 +183,7 @@ contract('FollowCoin', function(accounts) {
 			assert.equal(s3.valueOf(), coin(0).valueOf(), "totalSupply is wrong"); // 0 left, migrated
 
 			const s4 = await this.tokenc.totalSupply();
-			assert.equal(s4.valueOf(), coin(1e9).valueOf(), "totalSupply is wrong"); // all 1B migrated
+			assert.equal(s4.valueOf(), coin(total).valueOf(), "totalSupply is wrong"); // all 1B migrated
 		});
 
 
