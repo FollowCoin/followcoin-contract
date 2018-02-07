@@ -1,6 +1,8 @@
 # FollowCoin contracts audit report 01-05.02.2018
   The purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development. We propose following changes and improvements that would drastically increase further progress.
   
+  This audit covered everything till commit [da8d5522ee986edc4872dbb589d5a21e93ded94d](https://github.com/FollowCoin/followcoin-contract/commit/da8d5522ee986edc4872dbb589d5a21e93ded94d). No logic or security flaws have been found.
+  
 ## Table of contents
 * [Github Repository](#github-repository)
 * [JavaScript Review](#javascript-review)
