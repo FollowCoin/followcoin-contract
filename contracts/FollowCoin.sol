@@ -20,7 +20,7 @@ contract FollowCoin is MigratoryToken {
 		name = "FollowCoin";
 		symbol = "FLLW";
 		decimals = 18;
-		totalSupply_ = 515547536*1e18;
+		totalSupply_ = 515547535173959076174820000;
 		balances[owner] = totalSupply_;
 		holders[holders.length++] = owner;
 		isHolder[owner] = true;
