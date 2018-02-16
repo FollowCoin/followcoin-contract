@@ -1,12 +1,14 @@
 # FollowCoin contracts audit report 01-05.02.2018
   The purpose of this audit was to indicate the correctness of the contract’s operation, check the quality of the code and general help in further development. We propose following changes and improvements that would drastically increase further progress.
   
-  This audit covered everything till commit [da8d5522ee986edc4872dbb589d5a21e93ded94d](https://github.com/FollowCoin/followcoin-contract/commit/da8d5522ee986edc4872dbb589d5a21e93ded94d). No logic or security flaws have been found.
+  This audit covered everything till commit [da8d5522ee986edc4872dbb589d5a21e93ded94d](https://github.com/FollowCoin/followcoin-contract/commit/da8d5522ee986edc4872dbb589d5a21e93ded94d).
   
 ## Table of contents
 * [Github Repository](#github-repository)
 * [JavaScript Review](#javascript-review)
 * [Suggestions about contracts code](#suggestions-about-contracts-code)
+* [Known security issues in context of FollowCoin](#known-security-issues-in-context-of-followcoin)
+* [Security issues](#security-issues)
 * [Questions for feature verification](#questions-for-feature-verification)
 * [Individual test file coverage report](#individual-test-file-coverage-report)
 * [Test Suite Results](#test-suite-results)
@@ -68,6 +70,32 @@
 4. Smart Contract code often is not DRY (Do not Repeat Yourself rule), for example in <strong>transferFrom</strong> function which is overloaded couple of times, but instead of having common base for those functions, each overload copies the same code and changes just one line.
 
 5. You should use uint256 were possible as it's gas cost is lower
+
+## Known security issues in context of FollowCoin
+
+#### Reetrancy
+Generally FollowCoin is not calling to any external smart contracts, so this attack does not apply to FollowCoin.
+
+#### Timestamp Dependence 
+There is no block.timestamp usage within followcoin contract.
+
+#### Integer Overflow and Underflow
+This attack is impossible for now, in all cases of addition or subtraction follow coin uses safemath. In one case inside migrateHolders function of MigratoryToken.sol “+” operator is used but its only available for the owner of contract. We advice to change implementation in a way that uses SafeMath add method so it won’t be possible to break this function.
+
+#### DoS with (Unexpected) revert 
+Most Denial of Service are consequences of calling to external contract’s method (fallback function in particular) which is not the case in FollowCoin (FollowCoin reverts all transactions on fallback)
+
+#### DoS with Block Gas Limit
+The only place which could be vulnerable to this attack is transferMulti function in FollowCoin because of possible big size of _values. But on the other hand it is restricted to migrationGate address there it is run only by authorized person so if it fails because of too big array it can be run again with smaller arrays
+
+#### Forcibly Sending Ether to a Contract   
+Follow coin is safe from FSE attack as it doesn’t depend on contract balance.
+
+## Security issues
+
+#### transferMulti function issue:
+
+There’s no check before `for` loop that sum of `_values` does not exceed `balances[owner]`. Check at line 60 in FollowCoin.sol is very weak, it cannot determine upfront if function is receiving correct arguments. You should add assertion that check if sum of `_value` array is lesser or equal to `balances[msg.sender]`
 
 ## Questions for feature verification
 
@@ -176,6 +204,7 @@
         
 ## Authors
   - Jerzy Spendel [https://github.com/jerzyspendel](https://github.com/jerzyspendel)
+  - Dawid Ryguła [https://github.com/Dawid-Rygula](https://github.com/Dawid-Rygula)
   - Chris Parjaszewski [https://github.com/krzysztofp](https://github.com/krzysztofp)
   - Łukasz Sojka [https://github.com/sojek](https://github.com/sojek)
   - Tomasz Ferens [https://github.com/tomaszferens](https://github.com/tomaszferens)
