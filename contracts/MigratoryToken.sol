@@ -51,7 +51,7 @@ contract MigratoryToken is HoldersToken {
 		require(count > 0);
 		require(migrationAgent != 0x0);
 		// Calculate bounds for processing
-		count = migrationCountComplete + count;
+		count = migrationCountComplete.add(count);
 		if (count > holders.length) {
 			count = holders.length;
 		}
