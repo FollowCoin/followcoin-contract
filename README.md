@@ -62,7 +62,8 @@ Max purchase per wallet during token sale: 1000 ETH
 
 FLLW tokens purchased during the token sale will be sent directly to the purchasing wallet address. All tokens will be locked until 21 days after the closing of the Token Sale.
 
-The contracts were externally reviewed and tested by Yshurik and Bitcoinbrisbane. Reviews can be found here:
+The contracts were externally reviewed and tested by Yshurik, Bitcoinbrisbane and Skygate. Reviews can be found here:
+[FollowCoin contracts audit report 01-05.02.2018](audit.md)
 https://gist.github.com/yshurik/521ec2bcbf5ca397367bcc297b85a921
 https://github.com/bitcoinbrisbane/followcoin-contract/blob/master/notes.md
 
