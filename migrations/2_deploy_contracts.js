@@ -7,7 +7,7 @@ module.exports = function(deployer) {
   const tokenName = 'Follow Coin';
   const decimalUnits = 18;
   const tokenSymbol = 'FLLW';
-  deployer.deploy(FollowCoin, wallet, initialSupply, tokenName, decimalUnits, tokenSymbol).then(function() {
+  deployer.deploy(FollowCoin).then(function() {
     const hardCap = web3.toWei(330000000, "ether");
     const softCap = 0;
     const token = FollowCoin.address;
